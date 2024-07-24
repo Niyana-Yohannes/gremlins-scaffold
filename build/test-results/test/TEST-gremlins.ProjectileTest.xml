@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="gremlins.ProjectileTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2022-10-28T11:36:42" hostname="NIYANAS-DELL" time="0.004">
+  <properties/>
+  <testcase name="shootFreezeballCollide()" classname="gremlins.ProjectileTest" time="0.0"/>
+  <testcase name="shootFireballCollide()" classname="gremlins.ProjectileTest" time="0.0"/>
+  <testcase name="brickDestructionAnimation()" classname="gremlins.ProjectileTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

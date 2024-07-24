@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MovingObject.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">gremlins_scaffold2</a> &gt; <a href="index.source.html" class="el_package">gremlins</a> &gt; <span class="el_source">MovingObject.java</span></div><h1>MovingObject.java</h1><pre class="source lang-java linenums">package gremlins;
+
+import processing.core.PImage;
+
+import java.util.ArrayList;
+
+
+public abstract class MovingObject extends GameObject {
+
+    //all moving objects need access to bricks, stones
+    /**
+     * all moving objects need access to stones
+     */
+    protected ArrayList&lt;Stone&gt; stones;
+    /**
+     * all moving objects need access to bricks
+     */
+    protected ArrayList&lt;Brick&gt; bricks;
+
+    //every moving object has xVel and yVel
+    /**
+     * every moving object has an x velocity
+     */
+    protected int xVel;
+    /**
+     * every moving object has a y velocity
+     */
+    protected int yVel;
+    /**
+     * every moving object has an direction
+     */
+    protected String direction;
+
+    //all moving objects can collide with other objects
+    /**
+     * Boolean that determines if object has collided with another object 
+     */
+    protected boolean collide;
+
+    //all moving objects can cease to exit
+    /**
+     * Boolean that determines if object is alive as all moving objects can die
+     */
+    protected boolean alive;
+
+    public MovingObject(int x, int y, PImage sprite){
+<span class="fc" id="L47">        super(x, y, sprite);</span>
+<span class="fc" id="L48">        this.stones = null;</span>
+<span class="fc" id="L49">        this.bricks = null;</span>
+<span class="fc" id="L50">        this.collide = false;</span>
+<span class="fc" id="L51">        this.alive = true;</span>
+<span class="fc" id="L52">        this.direction = null;</span>
+<span class="fc" id="L53">    }</span>
+
+    //getter
+    public boolean getAlive(){
+<span class="fc" id="L57">        return this.alive;</span>
+    }
+
+    //setter
+    public void setStones(ArrayList&lt;Stone&gt; stones){
+<span class="fc" id="L62">        this.stones = stones;</span>
+<span class="fc" id="L63">    }</span>
+    public void setBricks(ArrayList&lt;Brick&gt; bricks){
+<span class="fc" id="L65">        this.bricks = bricks;</span>
+<span class="fc" id="L66">    }</span>
+    public void setDirection(String direction){
+<span class="fc" id="L68">        this.direction = direction;</span>
+<span class="fc" id="L69">    }</span>
+    public void setNotAlive(){
+<span class="fc" id="L71">        this.alive = false;</span>
+<span class="fc" id="L72">    }</span>
+
+
+    /**
+     * Determines if this object moving in a certain direction results in a collision with an object specified in parameters, and if so sets attribute collide to false.
+     * Uses rectangle collision detection.  
+     * @param gameObjects: An arraylist of types that extend game objects 
+     * @param direction: A string which indicates direction moving object will move
+     */
+    public void checkCollision(ArrayList&lt;? extends GameObject&gt; gameObjects, String direction){ 
+<span class="fc bfc" id="L82" title="All 2 branches covered.">        for(GameObject gameObject: gameObjects){</span>
+
+<span class="fc" id="L84">            int GameObjectLeft = gameObject.getX();</span>
+<span class="fc" id="L85">            int GameObjectRight = gameObject.getX() + gameObject.getWidth();</span>
+<span class="fc" id="L86">            int GameObjectTop = gameObject.getY();</span>
+<span class="fc" id="L87">            int GameObjectBottom = gameObject.getY() + gameObject.getHeight();</span>
+
+<span class="fc bfc" id="L89" title="All 2 branches covered.">            if(direction.equals(&quot;left&quot;)){</span>
+<span class="fc" id="L90">                int movingObjectLeft = this.x - this.xVel;</span>
+<span class="fc" id="L91">                int movingObjectRight = this.x + this.sprite.width - this.xVel;</span>
+<span class="fc" id="L92">                int movingObjectBottom = this.y + this.sprite.height;</span>
+<span class="fc" id="L93">                int movingObjectTop = this.y;</span>
+<span class="fc bfc" id="L94" title="All 8 branches covered.">                if(movingObjectRight &gt; GameObjectLeft &amp;&amp; movingObjectLeft &lt; GameObjectRight &amp;&amp; movingObjectBottom &gt; GameObjectTop &amp;&amp; movingObjectTop &lt; GameObjectBottom){</span>
+<span class="fc" id="L95">                    this.collide = true;</span>
+<span class="fc" id="L96">                    return;</span>
+                }
+<span class="fc" id="L98">            }</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">            else if(direction.equals(&quot;right&quot;)){</span>
+<span class="fc" id="L100">                int movingObjectLeft = this.x + this.xVel;</span>
+<span class="fc" id="L101">                int movingObjectRight = this.x + this.sprite.width + this.xVel;</span>
+<span class="fc" id="L102">                int movingObjectBottom = this.y + this.sprite.height;</span>
+<span class="fc" id="L103">                int movingObjectTop = this.y;</span>
+<span class="fc bfc" id="L104" title="All 8 branches covered.">                if(movingObjectRight &gt; GameObjectLeft &amp;&amp; movingObjectLeft &lt; GameObjectRight &amp;&amp; movingObjectBottom &gt; GameObjectTop &amp;&amp; movingObjectTop &lt; GameObjectBottom){</span>
+<span class="fc" id="L105">                    this.collide = true;</span>
+<span class="fc" id="L106">                    return;</span>
+                }
+<span class="fc" id="L108">            }</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">            else if(direction.equals(&quot;down&quot;)){</span>
+<span class="fc" id="L110">                int movingObjectLeft = this.x;</span>
+<span class="fc" id="L111">                int movingObjectRight = this.x + this.sprite.width;</span>
+<span class="fc" id="L112">                int movingObjectBottom = this.y + this.sprite.height + this.yVel;</span>
+<span class="fc" id="L113">                int movingObjectTop = this.y + this.yVel;</span>
+<span class="fc bfc" id="L114" title="All 8 branches covered.">                if(movingObjectRight &gt; GameObjectLeft &amp;&amp; movingObjectLeft &lt; GameObjectRight &amp;&amp; movingObjectBottom &gt; GameObjectTop &amp;&amp; movingObjectTop &lt; GameObjectBottom){</span>
+<span class="fc" id="L115">                    this.collide = true;</span>
+<span class="fc" id="L116">                    return;</span>
+                }
+<span class="fc" id="L118">            }</span>
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">            else if(direction.equals(&quot;up&quot;)){</span>
+<span class="fc" id="L120">                int movingObjectLeft = this.x;</span>
+<span class="fc" id="L121">                int movingObjectRight = this.x + this.sprite.width;</span>
+<span class="fc" id="L122">                int movingObjectBottom = this.y + this.sprite.height - this.yVel;</span>
+<span class="fc" id="L123">                int movingObjectTop = this.y - this.yVel;</span>
+<span class="fc bfc" id="L124" title="All 8 branches covered.">                if(movingObjectRight &gt; GameObjectLeft &amp;&amp; movingObjectLeft &lt; GameObjectRight &amp;&amp; movingObjectBottom &gt; GameObjectTop &amp;&amp; movingObjectTop &lt; GameObjectBottom){</span>
+<span class="fc" id="L125">                    this.collide = true;</span>
+<span class="fc" id="L126">                    return;</span>
+                }
+            }
+<span class="fc" id="L129">        }</span>
+
+<span class="fc" id="L131">    }</span>
+
+
+    /**
+     * Determines if object has already collided with a moving object, and if so, set alive attribute to false.
+     * @param movingObjects: An arraylist of types that extend moving objects
+     */
+    public void checkAlive(ArrayList&lt;? extends MovingObject&gt; movingObjects){
+<span class="fc bfc" id="L139" title="All 2 branches covered.">        for (MovingObject movingObject: movingObjects){</span>
+<span class="fc" id="L140">            int thisRight = this.x + this.sprite.width;</span>
+<span class="fc" id="L141">            int thisBottom = this.y + this.sprite.height;</span>
+
+<span class="fc" id="L143">            int movingObjectLeft = movingObject.getX();</span>
+<span class="fc" id="L144">            int movingObjectRight = movingObject.getX() + movingObject.getWidth();</span>
+<span class="fc" id="L145">            int movingObjectTop = movingObject.getY();</span>
+<span class="fc" id="L146">            int movingObjectBottom = movingObject.getY() + movingObject.getHeight();</span>
+
+<span class="pc bpc" id="L148" title="3 of 8 branches missed.">            if(thisRight &gt; movingObjectLeft &amp;&amp; this.x &lt; movingObjectRight &amp;&amp; thisBottom &gt; movingObjectTop &amp;&amp; this.y &lt; movingObjectBottom){</span>
+<span class="nc" id="L149">                this.alive = false;</span>
+<span class="nc" id="L150">                return;</span>
+            }
+<span class="fc" id="L152">        }</span>
+<span class="fc" id="L153">    }</span>
+
+    // Collision Method to see if already collided (Sets both alive to false)
+    /**
+     * Determines if object has already collided with a moving object, and if so, set alive attribute of both object and moving object to false.
+     * @param movingObjects: An arraylist of types that extend moving objects
+     */
+    public void checkAliveBoth(ArrayList&lt;? extends MovingObject&gt; movingObjects){
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        for (MovingObject movingObject: movingObjects){</span>
+<span class="fc" id="L162">            int thisRight = this.x + this.sprite.width;</span>
+<span class="fc" id="L163">            int thisBottom = this.y + this.sprite.height;</span>
+
+<span class="fc" id="L165">            int movingObjectLeft = movingObject.getX();</span>
+<span class="fc" id="L166">            int movingObjectRight = movingObject.getX() + movingObject.getWidth();</span>
+<span class="fc" id="L167">            int movingObjectTop = movingObject.getY();</span>
+<span class="fc" id="L168">            int movingObjectBottom = movingObject.getY() + movingObject.getHeight();</span>
+
+<span class="pc bpc" id="L170" title="3 of 8 branches missed.">            if(thisRight &gt; movingObjectLeft &amp;&amp; this.x &lt; movingObjectRight &amp;&amp; thisBottom &gt; movingObjectTop &amp;&amp; this.y &lt; movingObjectBottom){</span>
+<span class="nc" id="L171">                this.alive = false;</span>
+<span class="nc" id="L172">                movingObject.setNotAlive();</span>
+<span class="nc" id="L173">                return;</span>
+            }
+<span class="fc" id="L175">        }</span>
+<span class="fc" id="L176">    }   </span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

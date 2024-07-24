@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="gremlins.GameStateTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2022-10-28T11:36:36" hostname="NIYANAS-DELL" time="0.011">
+  <properties/>
+  <testcase name="moveToLose()" classname="gremlins.GameStateTest" time="0.0"/>
+  <testcase name="winToOne()" classname="gremlins.GameStateTest" time="0.001"/>
+  <testcase name="moveToLose2()" classname="gremlins.GameStateTest" time="0.001"/>
+  <testcase name="moveToLevelTwo()" classname="gremlins.GameStateTest" time="0.0"/>
+  <testcase name="loseALife()" classname="gremlins.GameStateTest" time="0.001"/>
+  <testcase name="loseToOne()" classname="gremlins.GameStateTest" time="0.0"/>
+  <testcase name="moveToWin()" classname="gremlins.GameStateTest" time="0.0"/>
+  <testcase name="loseALife2()" classname="gremlins.GameStateTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

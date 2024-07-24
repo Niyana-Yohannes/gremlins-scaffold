@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Fireball.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">gremlins_scaffold2</a> &gt; <a href="index.source.html" class="el_package">gremlins</a> &gt; <span class="el_source">Fireball.java</span></div><h1>Fireball.java</h1><pre class="source lang-java linenums">package gremlins;
+
+import processing.core.PImage;
+
+import java.util.ArrayList;
+
+public class Fireball extends MovingObject {
+
+    //needs access to slime
+    private ArrayList&lt;Slime&gt; slimes;
+
+    public Fireball(int x, int y, PImage sprite){
+<span class="fc" id="L13">        super(x,y,sprite);</span>
+
+<span class="fc" id="L15">        this.xVel = 4;</span>
+<span class="fc" id="L16">        this.yVel = 4;</span>
+
+<span class="fc" id="L18">        this.slimes = null;</span>
+<span class="fc" id="L19">    }</span>
+
+    /**
+     * Executes logic that invovlves fireball movement, and collision with tiles and slime
+     */
+    public void tick(){
+
+        //Moving
+
+        //Checks if collides with bricks
+<span class="fc" id="L29">        checkBrickCollision(this.bricks, this.direction);</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">        if(this.collide){</span>
+<span class="fc" id="L31">            this.alive = false;</span>
+        }
+        //Check if collides with stones
+<span class="fc" id="L34">        checkCollision(this.stones, this.direction);</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        if(this.collide){</span>
+<span class="fc" id="L36">            this.alive = false;</span>
+        }
+        //If not collided, continue moving in same direction
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        if(!this.collide){</span>
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">            if(this.direction.equals(&quot;left&quot;)){</span>
+<span class="nc" id="L41">                this.x -= xVel;</span>
+            }
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">            else if(this.direction.equals(&quot;up&quot;)){</span>
+<span class="nc" id="L44">                this.y -= yVel;</span>
+            }
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">            else if(this.direction.equals(&quot;right&quot;)){</span>
+<span class="fc" id="L47">                this.x += xVel;</span>
+            }
+<span class="nc bnc" id="L49" title="All 2 branches missed.">            else if(this.direction.equals(&quot;down&quot;)){</span>
+<span class="nc" id="L50">                this.y += yVel;</span>
+            }
+        }
+        
+        //If collided with slime, is dead
+<span class="fc" id="L55">        checkAlive(this.slimes);</span>
+<span class="fc" id="L56">    }</span>
+
+    //setter
+    public void setSlimes(ArrayList&lt;Slime&gt; slimes){
+<span class="fc" id="L60">        this.slimes = slimes;</span>
+<span class="fc" id="L61">    }</span>
+
+
+    /**
+     * Fireball has its own collision method as if it collides with a brick, the brick destruction animation needs to begin
+     * @param bricks: Arraylist of type brick
+     * @param direction: Direction fireball will move
+     */
+    public void checkBrickCollision(ArrayList&lt;Brick&gt; bricks, String direction){ 
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        for(Brick brick: bricks){</span>
+
+<span class="fc" id="L72">            int brickLeft = brick.getX();</span>
+<span class="fc" id="L73">            int brickRight = brick.getX() + brick.getWidth();</span>
+<span class="fc" id="L74">            int brickTop = brick.getY();</span>
+<span class="fc" id="L75">            int brickBottom = brick.getY() + brick.getHeight();</span>
+
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">            if(direction.equals(&quot;left&quot;)){</span>
+<span class="nc" id="L78">                int fireballLeft = this.x - this.xVel;</span>
+<span class="nc" id="L79">                int fireballRight = this.x + this.sprite.width - this.xVel;</span>
+<span class="nc" id="L80">                int fireballBottom = this.y + this.sprite.height;</span>
+<span class="nc" id="L81">                int fireballTop = this.y;</span>
+<span class="nc bnc" id="L82" title="All 8 branches missed.">                if(fireballRight &gt; brickLeft &amp;&amp;fireballLeft &lt; brickRight &amp;&amp;fireballBottom &gt; brickTop &amp;&amp;fireballTop &lt; brickBottom){</span>
+<span class="nc" id="L83">                    this.collide = true;</span>
+<span class="nc" id="L84">                    brick.setAlive();</span>
+<span class="nc" id="L85">                    return;</span>
+                }
+<span class="nc" id="L87">            }</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">            else if(direction.equals(&quot;right&quot;)){</span>
+<span class="fc" id="L89">                int fireballLeft = this.x + this.xVel;</span>
+<span class="fc" id="L90">                int fireballRight = this.x + this.sprite.width + this.xVel;</span>
+<span class="fc" id="L91">                int fireballBottom = this.y + this.sprite.height;</span>
+<span class="fc" id="L92">                int fireballTop = this.y;</span>
+<span class="pc bpc" id="L93" title="3 of 8 branches missed.">                if(fireballRight &gt; brickLeft &amp;&amp;fireballLeft &lt; brickRight &amp;&amp;fireballBottom &gt; brickTop &amp;&amp;fireballTop &lt; brickBottom){</span>
+<span class="nc" id="L94">                    this.collide = true;</span>
+<span class="nc" id="L95">                    brick.setAlive();</span>
+<span class="nc" id="L96">                    return;</span>
+                }
+<span class="fc" id="L98">            }</span>
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">            else if(direction.equals(&quot;down&quot;)){</span>
+<span class="fc" id="L100">                int fireballLeft = this.x;</span>
+<span class="fc" id="L101">                int fireballRight = this.x + this.sprite.width;</span>
+<span class="fc" id="L102">                int fireballBottom = this.y + this.sprite.height + this.yVel;</span>
+<span class="fc" id="L103">                int fireballTop = this.y + this.yVel;</span>
+<span class="pc bpc" id="L104" title="3 of 8 branches missed.">                if(fireballRight &gt; brickLeft &amp;&amp;fireballLeft &lt; brickRight &amp;&amp;fireballBottom &gt; brickTop &amp;&amp;fireballTop &lt; brickBottom){</span>
+<span class="fc" id="L105">                    this.collide = true;</span>
+<span class="fc" id="L106">                    brick.setAlive();</span>
+<span class="fc" id="L107">                    return;</span>
+                }
+<span class="fc" id="L109">            }</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">            else if(direction.equals(&quot;up&quot;)){</span>
+<span class="nc" id="L111">                int fireballLeft = this.x;</span>
+<span class="nc" id="L112">                int fireballRight = this.x + this.sprite.width;</span>
+<span class="nc" id="L113">                int fireballBottom = this.y + this.sprite.height - this.yVel;</span>
+<span class="nc" id="L114">                int fireballTop = this.y - this.yVel;</span>
+<span class="nc bnc" id="L115" title="All 8 branches missed.">                if(fireballRight &gt; brickLeft &amp;&amp; fireballLeft &lt; brickRight &amp;&amp; fireballBottom &gt; brickTop &amp;&amp; fireballTop &lt; brickBottom){</span>
+<span class="nc" id="L116">                    this.collide = true;</span>
+<span class="nc" id="L117">                    brick.setAlive();</span>
+<span class="nc" id="L118">                    return;</span>
+                }
+            }
+<span class="fc" id="L121">        }</span>
+
+<span class="fc" id="L123">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

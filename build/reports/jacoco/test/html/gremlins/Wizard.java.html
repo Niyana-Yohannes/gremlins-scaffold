@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Wizard.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">gremlins_scaffold2</a> &gt; <a href="index.source.html" class="el_package">gremlins</a> &gt; <span class="el_source">Wizard.java</span></div><h1>Wizard.java</h1><pre class="source lang-java linenums">package gremlins;
+
+import processing.core.PImage;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.ListIterator;
+import java.util.Random;
+
+
+public class Wizard extends MovingObject{
+
+    private int lives;
+    private double cooldown;
+
+    //Wizard also needs access to gremlins, slime, fireball, and freezeball, airTiles and powerups
+    private ArrayList&lt;Gremlin&gt; gremlins;
+    private ArrayList&lt;Slime&gt; slimes;
+    private ArrayList&lt;Fireball&gt; fireballs;
+    private ArrayList&lt;Freeze&gt; freezeballs;
+    private ArrayList&lt;Air&gt; airTiles;
+    private ArrayList&lt;PowerUp&gt; powerups;
+    //Wizard also needs access to PImages
+    private PImage wizard0;
+    private PImage wizard1;
+    private PImage wizard2;
+    private PImage wizard3;
+    private PImage fireballPimage; 
+    private PImage freezeballPimage; 
+    private PImage air;
+    private PImage powerUp;
+    //For moving
+    private boolean isMoving;
+    private int pixelCounter;
+    private boolean moveLeft;
+    private boolean moveRight;
+    private boolean moveUp;
+    private boolean moveDown;
+    private boolean moveLeftWholeTile;
+    private boolean moveRightWholeTile;
+    private boolean moveUpWholeTile;
+    private boolean moveDownWholeTile;
+    //For shooting
+    private int timerFireball; 
+    private int timerFreezeball;
+    private boolean shootFireball;
+    private boolean shootFreezeball;
+    //For powerup
+    private boolean changeVel;
+    private int changeVelTimer;
+    //For cooldown bar
+    private boolean drawRectFireball;
+    private boolean drawRectFreezeball;
+    private int timerRectFireball; 
+    private int timerRectFreezeball;
+    //For powerup
+    private PowerUp powerUpFirst;
+    private boolean firstPowerUp;
+    private boolean removefirst;
+    private int initialTimer;
+<span class="fc" id="L61">    private final Random randomGenerator = new Random();</span>
+    private boolean powerUpReached;
+    private boolean drawPowerUp;
+    private int remainingTime;
+    private int powerUpTimer;
+
+
+    public Wizard(int x, int y, PImage sprite, PImage fireballPimage, PImage freezeballPimage, PImage air, PImage powerUp, PImage wizard0, PImage wizard2, PImage wizard3){
+<span class="fc" id="L69">        super(x,y,sprite);</span>
+
+<span class="fc" id="L71">        this.fireballPimage = fireballPimage;</span>
+<span class="fc" id="L72">        this.freezeballPimage = freezeballPimage;</span>
+<span class="fc" id="L73">        this.air = air;</span>
+<span class="fc" id="L74">        this.powerUp = powerUp;</span>
+<span class="fc" id="L75">        this.wizard0 = wizard0;</span>
+<span class="fc" id="L76">        this.wizard1 = sprite;</span>
+<span class="fc" id="L77">        this.wizard2 = wizard2;</span>
+<span class="fc" id="L78">        this.wizard3 = wizard3;</span>
+
+<span class="fc" id="L80">        this.direction = &quot;right&quot;;</span>
+
+<span class="fc" id="L82">        this.gremlins = null;</span>
+<span class="fc" id="L83">        this.slimes = null;</span>
+<span class="fc" id="L84">        this.fireballs = null;</span>
+<span class="fc" id="L85">        this.freezeballs = null;</span>
+<span class="fc" id="L86">        this.airTiles = null;</span>
+<span class="fc" id="L87">        this.powerups = null;</span>
+    
+<span class="fc" id="L89">        this.xVel = 2;</span>
+<span class="fc" id="L90">        this.yVel = 2;</span>
+
+<span class="fc" id="L92">        this.lives = 0; </span>
+<span class="fc" id="L93">        this.cooldown = 0; </span>
+
+<span class="fc" id="L95">        this.isMoving = false;</span>
+<span class="fc" id="L96">        this.pixelCounter = 0;</span>
+<span class="fc" id="L97">        this.moveLeft = false;</span>
+<span class="fc" id="L98">        this.moveRight = false;</span>
+<span class="fc" id="L99">        this.moveUp = false;</span>
+<span class="fc" id="L100">        this.moveDown = false;</span>
+<span class="fc" id="L101">        this.moveLeftWholeTile = false;</span>
+<span class="fc" id="L102">        this.moveRightWholeTile = false;</span>
+<span class="fc" id="L103">        this.moveUpWholeTile = false;</span>
+<span class="fc" id="L104">        this.moveDownWholeTile = false;</span>
+
+<span class="fc" id="L106">        this.timerFireball = 0;</span>
+<span class="fc" id="L107">        this.timerFreezeball = 0;</span>
+<span class="fc" id="L108">        this.shootFireball = false;</span>
+<span class="fc" id="L109">        this.shootFreezeball = false;</span>
+
+<span class="fc" id="L111">        this.changeVel = false;</span>
+<span class="fc" id="L112">        changeVelTimer = 0;</span>
+
+<span class="fc" id="L114">        this.drawRectFireball = false;</span>
+<span class="fc" id="L115">        this.drawRectFreezeball = false;</span>
+<span class="fc" id="L116">        this.timerRectFireball = 0;</span>
+<span class="fc" id="L117">        this.timerRectFreezeball = 0;</span>
+
+<span class="fc" id="L119">        this.powerUpTimer = 0;</span>
+<span class="fc" id="L120">        this.initialTimer = 0;</span>
+<span class="fc" id="L121">        this.powerUpReached = false;</span>
+<span class="fc" id="L122">        this.firstPowerUp = true;</span>
+<span class="fc" id="L123">        this.removefirst = true;</span>
+<span class="fc" id="L124">        this.drawPowerUp = false;</span>
+<span class="fc" id="L125">        this.remainingTime = 10;      </span>
+<span class="fc" id="L126">    }</span>
+
+    /**
+     * Executes logic involving wizard movement, powerup, collision with slimes and gremlins, and wizard shooting
+     */
+    public void tick(){
+        //For powerup   
+        //If powerup change velocity     
+<span class="fc bfc" id="L134" title="All 2 branches covered.">        if(this.changeVel){</span>
+<span class="fc" id="L135">            this.xVel = 4;</span>
+<span class="fc" id="L136">            this.yVel = 4;</span>
+<span class="fc" id="L137">            changeVelTimer++;</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">            if(changeVelTimer % 60 == 0){this.remainingTime--;}</span>
+        }
+        //Return to normal velocity after powerup timer reached and wizard on whole tile
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        if(changeVelTimer &gt;= 10*60){ </span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">            if(this.isMoving){</span>
+<span class="fc" id="L143">                ReachWholeTileWithPowerUp();</span>
+            }
+            else{
+<span class="fc" id="L146">                this.xVel = 2;</span>
+<span class="fc" id="L147">                this.yVel = 2;</span>
+<span class="fc" id="L148">                changeVel = false;</span>
+<span class="fc" id="L149">                changeVelTimer = 0;</span>
+<span class="fc" id="L150">                this.remainingTime = 10; </span>
+            }
+        }
+
+        //Moving
+        //Moves only once in whole tile
+<span class="fc bfc" id="L156" title="All 2 branches covered.">        if(!this.isMoving){</span>
+<span class="fc" id="L157">            this.collide = false;</span>
+
+            //Set sprite for each direction
+<span class="fc bfc" id="L160" title="All 2 branches covered.">            if(this.moveLeft){</span>
+<span class="fc" id="L161">                this.direction = &quot;left&quot;;</span>
+<span class="fc" id="L162">                this.sprite = this.wizard0;</span>
+            }
+<span class="fc bfc" id="L164" title="All 2 branches covered.">            else if(this.moveRight){</span>
+<span class="fc" id="L165">                this.direction = &quot;right&quot;;</span>
+<span class="fc" id="L166">                this.sprite = this.wizard1;</span>
+            }
+<span class="fc bfc" id="L168" title="All 2 branches covered.">            else if(this.moveUp){</span>
+<span class="fc" id="L169">                this.direction = &quot;up&quot;;</span>
+<span class="fc" id="L170">                this.sprite = wizard2;</span>
+            }
+<span class="fc bfc" id="L172" title="All 2 branches covered.">            else if(this.moveDown){</span>
+<span class="fc" id="L173">                this.direction = &quot;down&quot;;</span>
+<span class="fc" id="L174">                this.sprite = wizard3;</span>
+            }
+
+<span class="fc" id="L177">            checkCollision(this.bricks, this.direction);</span>
+<span class="fc" id="L178">            checkCollision(this.stones, this.direction);</span>
+
+            //If moving in direction does not result in collision, move in direction and set wizard moving boolean to true
+<span class="fc bfc" id="L181" title="All 2 branches covered.">            if(!this.collide){</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">                if(this.moveLeft){</span>
+<span class="fc" id="L183">                    this.x -= xVel;</span>
+<span class="fc" id="L184">                    this.setIsMoving();</span>
+<span class="fc" id="L185">                    this.moveLeftWholeTile = true;</span>
+<span class="fc" id="L186">                    this.moveRightWholeTile = false;</span>
+<span class="fc" id="L187">                    this.moveUpWholeTile = false;</span>
+<span class="fc" id="L188">                    this.moveDownWholeTile = false;</span>
+                }
+<span class="fc bfc" id="L190" title="All 2 branches covered.">                else if(this.moveRight){</span>
+<span class="fc" id="L191">                    this.x += xVel;</span>
+<span class="fc" id="L192">                    this.setIsMoving();</span>
+<span class="fc" id="L193">                    this.moveLeftWholeTile = false;</span>
+<span class="fc" id="L194">                    this.moveRightWholeTile = true;</span>
+<span class="fc" id="L195">                    this.moveUpWholeTile = false;</span>
+<span class="fc" id="L196">                    this.moveDownWholeTile = false;</span>
+                }
+<span class="fc bfc" id="L198" title="All 2 branches covered.">                else if(this.moveUp){</span>
+<span class="fc" id="L199">                    this.y -= yVel;</span>
+<span class="fc" id="L200">                    this.setIsMoving();</span>
+<span class="fc" id="L201">                    this.moveLeftWholeTile = false;</span>
+<span class="fc" id="L202">                    this.moveRightWholeTile = false;</span>
+<span class="fc" id="L203">                    this.moveUpWholeTile = true;</span>
+<span class="fc" id="L204">                    this.moveDownWholeTile = false;</span>
+                }
+<span class="fc bfc" id="L206" title="All 2 branches covered.">                else if(this.moveDown){</span>
+<span class="fc" id="L207">                    this.y += yVel;</span>
+<span class="fc" id="L208">                    this.setIsMoving();</span>
+<span class="fc" id="L209">                    this.moveLeftWholeTile = false;</span>
+<span class="fc" id="L210">                    this.moveRightWholeTile = false;</span>
+<span class="fc" id="L211">                    this.moveUpWholeTile = false;</span>
+<span class="fc" id="L212">                    this.moveDownWholeTile = true;}</span>
+            }
+        }
+
+        //If wizard is already moving, cannot change direction until whole tile is reached
+<span class="fc bfc" id="L217" title="All 2 branches covered.">        if(this.isMoving){</span>
+<span class="fc bfc" id="L218" title="All 2 branches covered.">            if(!this.changeVel){</span>
+<span class="fc" id="L219">                ReachWholeTileNormal();</span>
+            }
+<span class="fc bfc" id="L221" title="All 2 branches covered.">            if(this.changeVel){</span>
+<span class="fc" id="L222">                ReachWholeTileWithPowerUp();</span>
+            }
+        }
+
+        // Collision with Gremlins and Slimes
+<span class="fc" id="L227">        checkAlive(this.gremlins);</span>
+<span class="fc" id="L228">        checkAlive(this.slimes);</span>
+
+        // Shooting fireball and freezeball
+<span class="fc" id="L231">        timerFireball++;</span>
+<span class="fc" id="L232">        timerFreezeball++;</span>
+        //Shoot fireball and freezeball only after cooldown
+<span class="fc bfc" id="L234" title="All 4 branches covered.">        if(this.shootFireball &amp;&amp; timerFireball &gt;= cooldown*60){</span>
+<span class="fc" id="L235">            this.drawRectFireball = true;</span>
+<span class="fc" id="L236">            addFireball();</span>
+<span class="fc" id="L237">            timerFireball = 0;</span>
+<span class="fc" id="L238">            timerRectFireball = 0;</span>
+        }
+<span class="fc bfc" id="L240" title="All 4 branches covered.">        else if(this.shootFreezeball &amp;&amp; timerFreezeball &gt;= cooldown*60){</span>
+<span class="fc" id="L241">            this.drawRectFreezeball = true;</span>
+<span class="fc" id="L242">            addFreezeball();                                                      </span>
+<span class="fc" id="L243">            timerFreezeball = 0;</span>
+<span class="fc" id="L244">            timerRectFreezeball = 0;</span>
+        }
+        //Remove collided fireballs and freezeballs
+<span class="fc" id="L247">        checkDeadFireball();</span>
+<span class="fc" id="L248">        checkDeadFreezeball();</span>
+        
+        //For cooldown bar
+<span class="fc" id="L251">        timerRectFireball += Math.ceil(220.0 / Math.round(cooldown*60));           </span>
+<span class="fc" id="L252">        timerRectFreezeball += Math.ceil(220.0 / Math.round(cooldown*60));          </span>
+<span class="pc bpc" id="L253" title="1 of 4 branches missed.">        if(timerFireball &gt;= cooldown*60 &amp;&amp; !this.shootFireball){</span>
+<span class="fc" id="L254">            this.drawRectFireball = false;</span>
+<span class="fc" id="L255">            timerRectFireball = 0;</span>
+        }
+<span class="pc bpc" id="L257" title="1 of 4 branches missed.">        if(timerFreezeball &gt;= cooldown*60 &amp;&amp; !this.shootFreezeball){</span>
+<span class="fc" id="L258">            this.drawRectFreezeball = false;</span>
+<span class="fc" id="L259">            timerRectFreezeball = 0;</span>
+        } 
+
+        //Adding removed bricks to airTiles
+<span class="fc" id="L263">        checkDeadBrick();</span>
+
+        //For powerup
+        //First powerup needs delay
+<span class="fc bfc" id="L267" title="All 2 branches covered.">        if(this.firstPowerUp){</span>
+<span class="fc bfc" id="L268" title="All 2 branches covered.">            if(this.removefirst){</span>
+<span class="fc" id="L269">                int firstpowerUpx = powerups.get(0).getX();</span>
+<span class="fc" id="L270">                int firstpowerUpy = powerups.get(0).getY();</span>
+<span class="fc" id="L271">                this.powerUpFirst = new PowerUp(firstpowerUpx, firstpowerUpy, this.powerUp);</span>
+<span class="fc" id="L272">                firstpowerupRemove();</span>
+<span class="fc" id="L273">                this.removefirst = false;</span>
+            }
+<span class="fc bfc" id="L275" title="All 2 branches covered.">            if(initialTimer == 10*60){</span>
+<span class="fc" id="L276">                firstpowerupAdd();</span>
+<span class="fc" id="L277">                this.firstPowerUp = false;</span>
+            }
+<span class="fc" id="L279">            initialTimer++;</span>
+        }
+<span class="fc bfc" id="L281" title="All 2 branches covered.">        if(!this.firstPowerUp){</span>
+<span class="fc" id="L282">            reachedPowerUp();</span>
+<span class="fc bfc" id="L283" title="All 2 branches covered.">            if(this.powerUpReached){</span>
+<span class="fc" id="L284">                this.drawPowerUp = true;</span>
+<span class="fc" id="L285">                int randtime = randomGenerator.nextInt(5) + 10; //Between 10 - 15 secs</span>
+<span class="fc bfc" id="L286" title="All 2 branches covered.">                if(this.powerUpTimer &gt;= randtime*60){</span>
+<span class="fc" id="L287">                    powerUpAdd();</span>
+<span class="fc" id="L288">                    this.powerUpReached = false;</span>
+<span class="fc" id="L289">                    this.drawPowerUp = false;</span>
+<span class="fc" id="L290">                    powerUpTimer = 0;</span>
+                }
+<span class="fc" id="L292">                powerUpTimer++;</span>
+            }
+        }   
+<span class="fc" id="L295">    }</span>
+
+
+    //getter methods
+    public int getLives(){
+<span class="fc" id="L300">        return this.lives;</span>
+    }
+    public boolean isAlive(){
+<span class="fc" id="L303">        return this.alive;</span>
+    }
+    public boolean getIsMoving(){
+<span class="nc" id="L306">        return this.isMoving;</span>
+    }
+    public double getCooldown(){
+<span class="nc" id="L309">        return this.cooldown;</span>
+    }
+    public void changeVel(){
+<span class="nc" id="L312">        this.changeVel = true;</span>
+<span class="nc" id="L313">    }</span>
+    public boolean getdrawRectFireball(){
+<span class="fc" id="L315">        return this.drawRectFireball;</span>
+    }
+    public boolean getdrawRectFreezeball(){
+<span class="fc" id="L318">        return this.drawRectFreezeball;</span>
+    }
+    public int getTimerRectFireball(){
+<span class="fc" id="L321">        return this.timerRectFireball;</span>
+    }
+    public int getTimerRectFreezeball(){
+<span class="fc" id="L324">        return this.timerRectFreezeball;</span>
+    }
+    public boolean getdrawPowerUp(){
+<span class="fc" id="L327">        return this.drawPowerUp;</span>
+    }
+    public int getPowerUpTimer(){
+<span class="fc" id="L330">        return this.remainingTime;</span>
+    }
+
+    //setter methods
+    public void setLives(int lives){
+<span class="fc" id="L335">        this.lives = lives;</span>
+<span class="fc" id="L336">    }</span>
+    public void setCooldown(double cooldown){
+<span class="fc" id="L338">        this.cooldown = cooldown;</span>
+<span class="fc" id="L339">    }</span>
+    public void setIsMoving(){
+<span class="fc" id="L341">        this.isMoving = true;</span>
+<span class="fc" id="L342">    }</span>
+    public void setShootFireball(){
+<span class="fc" id="L344">        this.shootFireball = true;</span>
+<span class="fc" id="L345">    }</span>
+    public void stopShootFireball(){
+<span class="fc" id="L347">        this.shootFireball = false;</span>
+<span class="fc" id="L348">    }</span>
+    public void setShootFreezeball(){
+<span class="fc" id="L350">        this.shootFreezeball = true;</span>
+<span class="fc" id="L351">    }</span>
+    public void stopShootFreezeball(){
+<span class="fc" id="L353">        this.shootFreezeball = false;</span>
+<span class="fc" id="L354">    }</span>
+    public void setGremlins(ArrayList&lt;Gremlin&gt; gremlins){
+<span class="fc" id="L356">        this.gremlins = gremlins;</span>
+<span class="fc" id="L357">    }</span>
+    public void setSlimes(ArrayList&lt;Slime&gt; slimes){
+<span class="fc" id="L359">        this.slimes = slimes;</span>
+<span class="fc" id="L360">    }</span>
+    public void setFireballs(ArrayList&lt;Fireball&gt; fireballs){
+<span class="fc" id="L362">        this.fireballs = fireballs;</span>
+<span class="fc" id="L363">    }</span>
+    public void setFreezeballs(ArrayList&lt;Freeze&gt; freezeballs){
+<span class="fc" id="L365">        this.freezeballs = freezeballs;</span>
+<span class="fc" id="L366">    }</span>
+    public void setAirTiles(ArrayList&lt;Air&gt; airTiles){
+<span class="fc" id="L368">        this.airTiles = airTiles;</span>
+<span class="fc" id="L369">    }</span>
+    public void setPowerUps(ArrayList&lt;PowerUp&gt; powerups){
+<span class="fc" id="L371">        this.powerups = powerups;</span>
+<span class="fc" id="L372">    }</span>
+    public void setMoveLeft(){
+<span class="fc" id="L374">        this.moveLeft = true;</span>
+<span class="fc" id="L375">    }</span>
+    public void setMoveRight(){
+<span class="fc" id="L377">        this.moveRight = true;</span>
+<span class="fc" id="L378">    }</span>
+    public void setMoveUp(){
+<span class="fc" id="L380">        this.moveUp = true;</span>
+<span class="fc" id="L381">    }</span>
+    public void setMoveDown(){
+<span class="fc" id="L383">        this.moveDown = true;</span>
+<span class="fc" id="L384">    }</span>
+    public void stopMoveLeft(){
+<span class="fc" id="L386">        this.moveLeft = false;</span>
+<span class="fc" id="L387">    }</span>
+    public void stopMoveRight(){
+<span class="fc" id="L389">        this.moveRight = false;</span>
+<span class="fc" id="L390">    }</span>
+    public void stopMoveUp(){
+<span class="fc" id="L392">        this.moveUp = false;</span>
+<span class="fc" id="L393">    }</span>
+    public void stopMoveDown(){
+<span class="fc" id="L395">        this.moveDown = false;</span>
+<span class="fc" id="L396">    }</span>
+    
+
+    //helper methods
+    //Method for reaching whole tile if normal velocity
+    private void ReachWholeTileNormal(){
+<span class="fc" id="L402">        pixelCounter += xVel;</span>
+<span class="fc bfc" id="L403" title="All 2 branches covered.">        if(this.moveLeftWholeTile){this.x -= xVel;}</span>
+<span class="fc bfc" id="L404" title="All 2 branches covered.">        else if(this.moveRightWholeTile){this.x += xVel;}</span>
+<span class="fc bfc" id="L405" title="All 2 branches covered.">        else if(this.moveUpWholeTile){this.y -= yVel;}</span>
+<span class="pc bpc" id="L406" title="1 of 2 branches missed.">        else if(this.moveDownWholeTile){this.y += yVel;}</span>
+<span class="fc bfc" id="L407" title="All 2 branches covered.">        if(pixelCounter == 18){ </span>
+<span class="fc" id="L408">            this.isMoving = false;</span>
+<span class="fc" id="L409">            pixelCounter = 0;</span>
+        }
+<span class="fc" id="L411">    }</span>
+    //Method for reaching whole tile if powerup velocity
+    private void ReachWholeTileWithPowerUp(){
+<span class="fc" id="L414">        pixelCounter += xVel;</span>
+<span class="pc bpc" id="L415" title="1 of 2 branches missed.">        if(this.moveLeftWholeTile){this.x -= xVel;}</span>
+<span class="pc bpc" id="L416" title="1 of 2 branches missed.">        else if(this.moveRightWholeTile){this.x += xVel;}</span>
+<span class="pc bpc" id="L417" title="1 of 2 branches missed.">        else if(this.moveUpWholeTile){this.y -= yVel;}</span>
+<span class="nc bnc" id="L418" title="All 2 branches missed.">        else if(this.moveDownWholeTile){this.y += yVel;}</span>
+<span class="fc bfc" id="L419" title="All 2 branches covered.">        if(pixelCounter == 16){ </span>
+<span class="fc" id="L420">            this.isMoving = false;</span>
+<span class="fc" id="L421">            pixelCounter = 0;</span>
+        }
+<span class="fc" id="L423">    }</span>
+    //Method for adding fireballs and storing necessary game objects into fireball 
+    private void addFireball(){
+<span class="pc bpc" id="L426" title="1 of 2 branches missed.">        if(this.shootFireball){</span>
+<span class="fc" id="L427">            this.fireballs.add(new Fireball(this.x, this.y, this.fireballPimage));</span>
+<span class="fc" id="L428">            this.fireballs.get(fireballs.size() - 1).setDirection(this.direction);</span>
+<span class="fc" id="L429">            this.fireballs.get(fireballs.size() - 1).setBricks(this.bricks);</span>
+<span class="fc" id="L430">            this.fireballs.get(fireballs.size() - 1).setStones(this.stones);</span>
+<span class="fc" id="L431">            this.fireballs.get(fireballs.size() - 1).setSlimes(this.slimes);</span>
+        }
+<span class="fc" id="L433">    }</span>
+    //Method for adding freezeballs and storing necessary game objects into freezeball 
+    private void addFreezeball(){
+<span class="pc bpc" id="L436" title="1 of 2 branches missed.">        if(this.shootFreezeball){</span>
+<span class="fc" id="L437">            this.freezeballs.add(new Freeze(this.x, this.y, this.freezeballPimage));</span>
+<span class="fc" id="L438">            this.freezeballs.get(freezeballs.size() - 1).setDirection(this.direction);</span>
+<span class="fc" id="L439">            this.freezeballs.get(freezeballs.size() - 1).setBricks(this.bricks);</span>
+<span class="fc" id="L440">            this.freezeballs.get(freezeballs.size() - 1).setStones(this.stones);</span>
+<span class="fc" id="L441">            this.freezeballs.get(freezeballs.size() - 1).setSlimes(this.slimes);</span>
+        }
+<span class="fc" id="L443">    }</span>
+    //Removing fireballs that have collided with something
+    private void checkDeadFireball(){
+<span class="fc" id="L446">        Iterator&lt;Fireball&gt; itr = this.fireballs.iterator();</span>
+<span class="fc bfc" id="L447" title="All 2 branches covered.">        while(itr.hasNext()){</span>
+<span class="fc" id="L448">            Fireball fireball = itr.next();</span>
+<span class="fc bfc" id="L449" title="All 2 branches covered.">            if(!fireball.getAlive()){</span>
+<span class="fc" id="L450">                itr.remove();</span>
+            }
+<span class="fc" id="L452">        }</span>
+<span class="fc" id="L453">    }</span>
+    //Removing freezeballs that have collided with something
+    private void checkDeadFreezeball(){
+<span class="fc" id="L456">        Iterator&lt;Freeze&gt; itr = this.freezeballs.iterator();</span>
+<span class="fc bfc" id="L457" title="All 2 branches covered.">        while(itr.hasNext()){</span>
+<span class="fc" id="L458">            Freeze freezeball = itr.next();</span>
+<span class="fc bfc" id="L459" title="All 2 branches covered.">            if(!freezeball.getAlive()){</span>
+<span class="fc" id="L460">                itr.remove();</span>
+            }
+<span class="fc" id="L462">        }</span>
+<span class="fc" id="L463">    }   </span>
+    //Removing bricks that have been destroyed by fireball and adding coordinates to airTiles
+    private void checkDeadBrick(){
+<span class="fc" id="L466">        Iterator&lt;Brick&gt; itr = this.bricks.iterator();</span>
+<span class="fc" id="L467">        ListIterator&lt;Air&gt; itr2 = this.airTiles.listIterator();</span>
+<span class="fc bfc" id="L468" title="All 2 branches covered.">        while(itr.hasNext()){</span>
+<span class="fc" id="L469">            Brick brick = itr.next();</span>
+<span class="fc" id="L470">            int brickx = brick.getX();</span>
+<span class="fc" id="L471">            int bricky = brick.getY();</span>
+<span class="pc bpc" id="L472" title="1 of 2 branches missed.">            if(brick.getSwitchToAirTiles()){</span>
+<span class="nc" id="L473">                itr2.add(new Air(brickx, bricky, this.air)); </span>
+<span class="nc" id="L474">                itr.remove();</span>
+            }
+<span class="fc" id="L476">        }</span>
+<span class="fc" id="L477">    }</span>
+    //Used to determine if wizard moves on powerup 
+    private void reachedPowerUp(){
+<span class="fc" id="L480">        Iterator&lt;PowerUp&gt; itr = powerups.iterator();</span>
+<span class="fc bfc" id="L481" title="All 2 branches covered.">        while(itr.hasNext()){</span>
+<span class="fc" id="L482">            PowerUp powerup = itr.next();</span>
+<span class="pc bpc" id="L483" title="1 of 4 branches missed.">            if(this.x == powerup.getX() &amp;&amp; this.y == powerup.getY()){</span>
+<span class="fc" id="L484">                itr.remove();</span>
+<span class="fc" id="L485">                this.changeVel = true;</span>
+<span class="fc" id="L486">                this.powerUpReached = true;</span>
+            }
+<span class="fc" id="L488">        }</span>
+<span class="fc" id="L489">    }</span>
+    //Adds powerup
+    private void powerUpAdd(){
+<span class="fc" id="L492">        int chooserand = randomGenerator.nextInt(airTiles.size());</span>
+<span class="fc" id="L493">        Air nextPowerUpPos = airTiles.get(chooserand);</span>
+<span class="fc" id="L494">        int nextPowerUpx = nextPowerUpPos.getX();</span>
+<span class="fc" id="L495">        int nextPowerUpy = nextPowerUpPos.getY();</span>
+
+<span class="fc" id="L497">        ListIterator&lt;PowerUp&gt; itr2 = this.powerups.listIterator();</span>
+<span class="fc" id="L498">        itr2.add(new PowerUp(nextPowerUpx, nextPowerUpy, this.powerUp)); </span>
+<span class="fc" id="L499">    }</span>
+    //Below two methods used to ensure first powerup does not load immediately with map but after 10 sec delay
+    private void firstpowerupRemove(){
+<span class="fc" id="L502">        Iterator&lt;PowerUp&gt; itr = powerups.iterator();</span>
+<span class="fc bfc" id="L503" title="All 2 branches covered.">        while(itr.hasNext()){</span>
+<span class="fc" id="L504">            PowerUp powerup = itr.next();</span>
+<span class="fc" id="L505">            itr.remove();</span>
+<span class="fc" id="L506">        }</span>
+<span class="fc" id="L507">    }</span>
+    private void firstpowerupAdd(){
+<span class="fc" id="L509">        ListIterator&lt;PowerUp&gt; itr2 = this.powerups.listIterator();</span>
+<span class="fc" id="L510">        itr2.add(this.powerUpFirst); </span>
+<span class="fc" id="L511">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

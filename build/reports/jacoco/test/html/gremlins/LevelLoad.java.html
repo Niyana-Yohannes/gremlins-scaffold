@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LevelLoad.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">gremlins_scaffold2</a> &gt; <a href="index.source.html" class="el_package">gremlins</a> &gt; <span class="el_source">LevelLoad.java</span></div><h1>LevelLoad.java</h1><pre class="source lang-java linenums">package gremlins;
+
+import processing.core.PImage;
+
+import java.util.ArrayList;
+
+public class LevelLoad {
+
+    private int Level;
+
+    private String configPath;
+
+    private ArrayList&lt;Stone&gt; stones;
+    private ArrayList&lt;Brick&gt; bricks; 
+    private ExitDoor exitTile;
+    private ArrayList&lt;Air&gt; airTiles;
+    private ArrayList&lt;Gremlin&gt; gremlins;
+    private Wizard wizard;
+    private ArrayList&lt;PowerUp&gt; powerups;
+    private ArrayList&lt;Fireball&gt; fireballs;
+    private ArrayList&lt;Slime&gt; slimes;
+    private ArrayList&lt;Freeze&gt; freezeballs;
+    private ArrayList&lt;Wizard&gt; wizLives;
+
+    private PImage stonewall;
+    private PImage brickwall;
+    private PImage brickwall_destroyed0;
+    private PImage brickwall_destroyed1;
+    private PImage brickwall_destroyed2;
+    private PImage brickwall_destroyed3;
+    private PImage exitDoor;
+    private PImage air;
+    private PImage wizard0;
+    private PImage wizard1; 
+    private PImage wizard2;
+    private PImage wizard3;
+    private PImage gremlin;
+    private PImage fireball;
+    private PImage slime;
+    private PImage freezeball;
+    private PImage powerupImage;
+
+<span class="fc" id="L43">    public LevelLoad(int Level, String configPath, PImage stonewall, PImage brickwall, PImage gremlin, PImage wizard1, PImage exitDoor, PImage fireball, PImage slime, PImage freezeball, PImage brickwall_destroyed0, PImage brickwall_destroyed1, PImage brickwall_destroyed2, PImage brickwall_destroyed3, PImage powerupImage, PImage air, PImage wizard0, PImage wizard2, PImage wizard3){</span>
+<span class="fc" id="L44">        this.Level = Level;</span>
+<span class="fc" id="L45">        this.configPath = configPath;</span>
+
+<span class="fc" id="L47">        this.stones = new ArrayList&lt;Stone&gt;();</span>
+<span class="fc" id="L48">        this.bricks = new ArrayList&lt;Brick&gt;();</span>
+<span class="fc" id="L49">        this.airTiles = new ArrayList&lt;Air&gt;();</span>
+<span class="fc" id="L50">        this.gremlins = new ArrayList&lt;Gremlin&gt;();</span>
+<span class="fc" id="L51">        this.wizLives = new ArrayList&lt;Wizard&gt;(); </span>
+<span class="fc" id="L52">        this.fireballs = new ArrayList&lt;Fireball&gt;();</span>
+<span class="fc" id="L53">        this.freezeballs = new ArrayList&lt;Freeze&gt;();</span>
+<span class="fc" id="L54">        this.slimes = new ArrayList&lt;Slime&gt;();</span>
+<span class="fc" id="L55">        this.powerups = new ArrayList&lt;PowerUp&gt;();</span>
+<span class="fc" id="L56">        this.exitTile = null;</span>
+<span class="fc" id="L57">        this.wizard = null;</span>
+
+<span class="fc" id="L59">        this.stonewall = stonewall;</span>
+<span class="fc" id="L60">        this.brickwall = brickwall;</span>
+<span class="fc" id="L61">        this.brickwall_destroyed0 = brickwall_destroyed0;</span>
+<span class="fc" id="L62">        this.brickwall_destroyed1 = brickwall_destroyed1;</span>
+<span class="fc" id="L63">        this.brickwall_destroyed2 = brickwall_destroyed2;</span>
+<span class="fc" id="L64">        this.brickwall_destroyed3 = brickwall_destroyed3;</span>
+<span class="fc" id="L65">        this.exitDoor = exitDoor;</span>
+<span class="fc" id="L66">        this.air = air;</span>
+<span class="fc" id="L67">        this.gremlin = gremlin;</span>
+<span class="fc" id="L68">        this.wizard0 = wizard0;</span>
+<span class="fc" id="L69">        this.wizard1 = wizard1;</span>
+<span class="fc" id="L70">        this.wizard2 = wizard2;</span>
+<span class="fc" id="L71">        this.wizard3 = wizard3;</span>
+<span class="fc" id="L72">        this.fireball = fireball;</span>
+<span class="fc" id="L73">        this.freezeball = freezeball;</span>
+<span class="fc" id="L74">        this.slime = slime;</span>
+<span class="fc" id="L75">        this.powerupImage = powerupImage;</span>
+<span class="fc" id="L76">    }</span>
+
+    //Getter Methods
+    /**
+     * Returns its reference to an arraylist of stones
+     * @return ArrayList of type Stone
+     */
+    public ArrayList&lt;Stone&gt; getStones(){
+<span class="fc" id="L84">        return this.stones;</span>
+    }
+    /**
+     * Returns its reference to an arraylist of bricks
+     * @return ArrayList of type Brick
+     */
+    public ArrayList&lt;Brick&gt; getBricks(){
+<span class="fc" id="L91">        return this.bricks;</span>
+
+    }
+    /**
+     * Returns its reference to an ExitDoor type
+     * @return exitTile of type ExitDoor 
+     */
+    public ExitDoor getExitTile(){
+<span class="fc" id="L99">        return this.exitTile;</span>
+    }
+    /**
+     * Returns its reference to an arraylist of airTiles
+     * @return ArrayList of type Air
+     */
+    public ArrayList&lt;Air&gt; getAirTiles(){
+<span class="fc" id="L106">        return this.airTiles;</span>
+    }
+    /**
+     * Returns its reference to an arraylist of gremlins
+     * @return ArrayList of type Gremlin
+     */
+    public ArrayList&lt;Gremlin&gt; getGremlins(){
+<span class="fc" id="L113">        return this.gremlins;</span>
+
+    }
+    /**
+     * Returns its reference to a Wizard type
+     * @return object of type Wizard
+     */
+    public Wizard getWizard(){
+<span class="fc" id="L121">        return this.wizard;</span>
+    }
+    /**
+     * Returns its reference to an arraylist of wizard used to display wizard lives
+     * @return ArrayList of type Wizard
+     */
+    public ArrayList&lt;Wizard&gt; getWizLives(){
+<span class="fc" id="L128">        return this.wizLives;</span>
+
+    }
+    /**
+     * Returns its reference to an arraylist of fireball
+     * @return ArrayList of type Fireball
+     */
+    public ArrayList&lt;Fireball&gt; getFireballs(){
+<span class="fc" id="L136">        return this.fireballs;</span>
+    }
+    /**
+     * Returns its reference to an arraylist of freezeballs
+     * @return ArrayList of type Freeze
+     */
+    public ArrayList&lt;Freeze&gt; getFreezeballs(){
+<span class="fc" id="L143">        return this.freezeballs;</span>
+    }
+    /**
+     * Returns its reference to an arraylist of slimes
+     * @return ArrayList of type Slime
+     */
+    public ArrayList&lt;Slime&gt; getSlimes(){
+<span class="fc" id="L150">        return this.slimes;</span>
+    }
+    /**
+     * Returns its reference to an arraylist of powerups
+     * @return ArrayList of type PowerUp
+     */
+    public ArrayList&lt;PowerUp&gt; getPowerUps(){
+<span class="fc" id="L157">        return this.powerups;</span>
+    }
+
+    /**
+     * Reads the config file and stores game objects for specified level
+     */
+    public void Load(){
+        //Read Config file
+<span class="fc" id="L165">        Config newConfig = new Config(this.configPath);</span>
+        
+        //Store levels &amp; lives
+<span class="fc" id="L168">        ArrayList&lt;String[][]&gt; Maps = newConfig.getMap();</span>
+<span class="fc" id="L169">        String[] wiz_cooldowns = newConfig.getWizardCooldown(); </span>
+<span class="fc" id="L170">        String[] enemy_cooldowns = newConfig.getEnemyCooldown();</span>
+<span class="fc" id="L171">        int wizardLives = newConfig.getLives();</span>
+
+        //stores map for specified level
+<span class="fc" id="L174">        storeMap(Maps);</span>
+        //sets wizard cooldown for specified level
+<span class="fc" id="L176">        wizard.setCooldown(Double.parseDouble(wiz_cooldowns[this.Level-1]));</span>
+        //sets enemy cooldown for specified level
+<span class="fc bfc" id="L178" title="All 2 branches covered.">        for(Gremlin g: gremlins){</span>
+<span class="fc" id="L179">            g.setCooldown(Double.parseDouble(enemy_cooldowns[this.Level-1]));</span>
+<span class="fc" id="L180">        } </span>
+        //sets lives for wizard (same for both levels)
+<span class="fc" id="L182">        wizard.setLives(wizardLives);</span>
+        //sets wizard lives display for specified level, Wizards that show how many lives (have 1 life since just display)
+<span class="fc bfc" id="L184" title="All 2 branches covered.">        for(int i = 0; i &lt; wizardLives; i++){ </span>
+<span class="fc" id="L185">            wizLives.add(new Wizard((i+5)*20, 34*20, wizard1, fireball, freezeball, air, powerupImage, wizard0, wizard2, wizard3)); </span>
+        }
+
+        //Adding references of game objects to required game objects
+<span class="fc" id="L189">        wizard.setBricks(this.bricks);</span>
+<span class="fc" id="L190">        wizard.setStones(this.stones);</span>
+<span class="fc" id="L191">        wizard.setGremlins(this.gremlins);</span>
+<span class="fc" id="L192">        wizard.setSlimes(this.slimes);</span>
+<span class="fc" id="L193">        wizard.setFireballs(this.fireballs);</span>
+<span class="fc" id="L194">        wizard.setFreezeballs(this.freezeballs);</span>
+<span class="fc" id="L195">        wizard.setAirTiles(this.airTiles);</span>
+<span class="fc" id="L196">        wizard.setPowerUps(this.powerups);</span>
+<span class="fc bfc" id="L197" title="All 2 branches covered.">        for(Gremlin g : this.gremlins){</span>
+<span class="fc" id="L198">            g.setBricks(this.bricks);</span>
+<span class="fc" id="L199">            g.setStones(this.stones);</span>
+<span class="fc" id="L200">            g.setAirTiles(this.airTiles);</span>
+<span class="fc" id="L201">            g.setWizard(this.wizard);</span>
+<span class="fc" id="L202">            g.setFireballs(this.fireballs);</span>
+<span class="fc" id="L203">            g.setFreezeballs(this.freezeballs);</span>
+<span class="fc" id="L204">            g.setSlimes(this.slimes);</span>
+<span class="fc" id="L205">        }</span>
+<span class="fc" id="L206">        exitTile.setWizard(this.wizard);</span>
+<span class="fc" id="L207">    }</span>
+
+    //Helper methods
+    //Using the level, chooses the map and loops through contents, creating game object of respective types
+    //Raises an exception if file is invalid
+    private void storeMap(ArrayList&lt;String[][]&gt; Maps){
+<span class="fc" id="L213">        String[][] mapcontents = Maps.get(this.Level-1); // level 1 = index 0, level 2 = index 1, etc...</span>
+        try{
+<span class="fc bfc" id="L215" title="All 2 branches covered.">            for (int i = 0; i &lt; mapcontents.length; i++){</span>
+<span class="fc bfc" id="L216" title="All 2 branches covered.">                for(int j = 0; j &lt; mapcontents[i].length; j++){</span>
+<span class="fc bfc" id="L217" title="All 2 branches covered.">                    if(mapcontents[i][j].equals(&quot;X&quot;)){stones.add(new Stone(j*20, i*20, stonewall));}</span>
+<span class="fc bfc" id="L218" title="All 2 branches covered.">                    else if(mapcontents[i][j].equals(&quot;B&quot;)){bricks.add(new Brick(j*20, i*20, brickwall, brickwall_destroyed0, brickwall_destroyed1, brickwall_destroyed2, brickwall_destroyed3));}</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">                    else if(mapcontents[i][j].equals(&quot;E&quot;)){exitTile = new ExitDoor(j*20, i*20, exitDoor);}</span>
+<span class="fc bfc" id="L220" title="All 2 branches covered.">                    else if(mapcontents[i][j].equals(&quot; &quot;)){airTiles.add(new Air(j*20, i*20, air));} </span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">                    else if(mapcontents[i][j].equals(&quot;W&quot;)){wizard = new Wizard(j*20, i*20, wizard1, fireball, freezeball, air, powerupImage, wizard0, wizard2, wizard3);} </span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">                    else if(mapcontents[i][j].equals(&quot;P&quot;)){powerups.add(new PowerUp(j*20, i*20, powerupImage));}</span>
+<span class="pc bpc" id="L223" title="1 of 2 branches missed.">                    else if(mapcontents[i][j].equals(&quot;G&quot;)){gremlins.add(new Gremlin(j*20, i*20, gremlin, slime));}</span>
+<span class="nc" id="L224">                    else{throw new Exception(&quot;File has unknown character&quot;);} //Unknown character in map, raise an error</span>
+                }
+            }
+<span class="pc bpc" id="L227" title="2 of 4 branches missed.">            if(this.exitTile == null || this.wizard == null){</span>
+<span class="nc" id="L228">                throw new Exception(&quot;File missing starting point or exit&quot;);</span>
+            }
+        }
+<span class="nc" id="L231">        catch (Exception e){</span>
+<span class="nc" id="L232">            e.getMessage();</span>
+<span class="nc" id="L233">            e.printStackTrace();</span>
+<span class="fc" id="L234">        }</span>
+<span class="fc" id="L235">    }</span>
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

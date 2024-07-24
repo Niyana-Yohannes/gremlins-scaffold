@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Slime.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">gremlins_scaffold2</a> &gt; <a href="index.source.html" class="el_package">gremlins</a> &gt; <span class="el_source">Slime.java</span></div><h1>Slime.java</h1><pre class="source lang-java linenums">package gremlins;
+
+import processing.core.PImage;
+
+import java.util.ArrayList;
+
+public class Slime extends MovingObject {
+
+    //needs fireball and freezeball
+    private ArrayList&lt;Fireball&gt; fireballs;
+    private ArrayList&lt;Freeze&gt; freezeballs;
+
+    public Slime(int x, int y, PImage sprite){
+<span class="fc" id="L14">        super(x,y,sprite);</span>
+
+<span class="fc" id="L16">        this.xVel = 4;</span>
+<span class="fc" id="L17">        this.yVel = 4;</span>
+
+<span class="fc" id="L19">        this.fireballs = null;</span>
+<span class="fc" id="L20">        this.freezeballs = null;</span>
+
+<span class="fc" id="L22">    }</span>
+
+    /**
+     * Executes logic that invovlves slime movement, and collision with tiles, fireball and freezeball
+     */
+    public void tick(){
+
+        //Moving
+<span class="fc" id="L30">        checkCollision(this.bricks, this.direction);</span>
+<span class="fc" id="L31">        checkCollision(this.stones, this.direction);</span>
+<span class="fc bfc" id="L32" title="All 2 branches covered.">        if(this.collide){</span>
+<span class="fc" id="L33">            this.alive = false;</span>
+        }
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        if(!this.collide){</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">            if(this.direction.equals(&quot;left&quot;)){</span>
+<span class="fc" id="L37">                this.x -= xVel;</span>
+            }
+<span class="fc bfc" id="L39" title="All 2 branches covered.">            else if(this.direction.equals(&quot;up&quot;)){</span>
+<span class="fc" id="L40">                this.y -= yVel;</span>
+            }
+<span class="fc bfc" id="L42" title="All 2 branches covered.">            else if(this.direction.equals(&quot;right&quot;)){</span>
+<span class="fc" id="L43">                this.x += xVel;</span>
+            }
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">            else if(this.direction.equals(&quot;down&quot;)){</span>
+<span class="fc" id="L46">                this.y += yVel;</span>
+            }
+        }
+
+        //Collision with Fireball
+<span class="fc" id="L51">        checkAlive(this.fireballs);</span>
+        //Collision with Freezeball
+<span class="fc" id="L53">        checkAlive(this.freezeballs);</span>
+
+
+<span class="fc" id="L56">    }</span>
+
+    //setter
+    public void setFireball(ArrayList&lt;Fireball&gt; fireballs){
+<span class="fc" id="L60">        this.fireballs = fireballs;</span>
+<span class="fc" id="L61">    }</span>
+    public void setFreezeball(ArrayList&lt;Freeze&gt; freezeballs){
+<span class="fc" id="L63">        this.freezeballs = freezeballs;</span>
+<span class="fc" id="L64">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

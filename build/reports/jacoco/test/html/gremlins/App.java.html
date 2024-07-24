@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>App.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">gremlins_scaffold2</a> &gt; <a href="index.source.html" class="el_package">gremlins</a> &gt; <span class="el_source">App.java</span></div><h1>App.java</h1><pre class="source lang-java linenums">package gremlins;
+
+import processing.core.PApplet;
+import processing.core.PImage;
+import processing.core.PFont;
+
+import java.util.ArrayList;
+
+public class App extends PApplet {
+
+    public static final int WIDTH = 720;
+    public static final int HEIGHT = 720;
+
+    public static final int FPS = 60;
+
+    public String configPath;
+    
+    //PImage for game objects (air, fireball, slime, powerup, extension:freeze gremlins )
+    public PImage brickwall;
+    public PImage stonewall;
+    public PImage exitwall;
+    public PImage air;
+    public PImage wizard0;
+    public PImage wizard1;
+    public PImage wizard2;
+    public PImage wizard3;
+    public PImage gremlin;
+    public PImage fireball;
+    public PImage slime; 
+    public PImage freeze;
+    public PImage brickwall_destroyed0;
+    public PImage brickwall_destroyed1;
+    public PImage brickwall_destroyed2;
+    public PImage brickwall_destroyed3;
+    public PImage powerupImage;
+
+    //write on map
+    private PFont f;
+
+    //load each level
+    public LevelLoad levelOne;
+    public LevelLoad levelTwo;
+
+    //game states
+    public GameState levelOneState;
+    public GameState levelTwoState;
+    public GameState loseGameState;
+    public GameState winGameState;
+    public GameState currGameState;
+    public int nextState;
+
+    //storing game objects
+    public ArrayList&lt;Stone&gt; stones;
+    public ArrayList&lt;Brick&gt; bricks; 
+    public ExitDoor exitTile;
+    public ArrayList&lt;Air&gt; airTiles;
+    public ArrayList&lt;Gremlin&gt; gremlins;
+    public Wizard wizard;
+    public ArrayList&lt;Wizard&gt; livesDispWizards;
+    public ArrayList&lt;Fireball&gt; fireballs;
+    public ArrayList&lt;Slime&gt; slimes;
+    public ArrayList&lt;Freeze&gt; freezeballs;
+    public ArrayList&lt;PowerUp&gt; powerups;
+
+
+<span class="fc" id="L66">    public App() {</span>
+<span class="fc" id="L67">        this.configPath = &quot;config.json&quot;;</span>
+<span class="fc" id="L68">    }</span>
+
+    /**
+     * Initialise the setting of the window size.
+    */
+    public void settings() {
+<span class="fc" id="L74">        size(WIDTH, HEIGHT);</span>
+<span class="fc" id="L75">    }</span>
+
+    /**
+     * Load all resources such as images. Initialise the elements such as the player, enemies and map elements.
+    */
+    public void setup() {
+<span class="fc" id="L81">        frameRate(FPS);</span>
+
+        //Load images during setup
+<span class="fc" id="L84">        this.stonewall = loadImage(this.getClass().getResource(&quot;stonewall.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L85">        this.brickwall = loadImage(this.getClass().getResource(&quot;brickwall.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L86">        this.brickwall_destroyed0 = loadImage(this.getClass().getResource(&quot;brickwall_destroyed0.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L87">        this.brickwall_destroyed1 = loadImage(this.getClass().getResource(&quot;brickwall_destroyed1.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L88">        this.brickwall_destroyed2 = loadImage(this.getClass().getResource(&quot;brickwall_destroyed2.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L89">        this.brickwall_destroyed3 = loadImage(this.getClass().getResource(&quot;brickwall_destroyed3.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L90">        this.exitwall = loadImage(this.getClass().getResource(&quot;Door.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L91">        this.air = loadImage(this.getClass().getResource(&quot;airTile.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L92">        this.gremlin = loadImage(this.getClass().getResource(&quot;gremlin.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L93">        this.wizard0 = loadImage(this.getClass().getResource(&quot;wizard0.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L94">        this.wizard1 = loadImage(this.getClass().getResource(&quot;wizard1.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L95">        this.wizard2 = loadImage(this.getClass().getResource(&quot;wizard2.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L96">        this.wizard3 = loadImage(this.getClass().getResource(&quot;wizard3.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L97">        this.slime = loadImage(this.getClass().getResource(&quot;slime.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L98">        this.fireball = loadImage(this.getClass().getResource(&quot;fireball.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L99">        this.freeze = loadImage(this.getClass().getResource(&quot;freezeball.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+<span class="fc" id="L100">        this.powerupImage = loadImage(this.getClass().getResource(&quot;lightning.png&quot;).getPath().replace(&quot;%20&quot;, &quot; &quot;));</span>
+        
+        
+<span class="fc" id="L103">        f = createFont(&quot;Arial&quot;,16);</span>
+
+<span class="fc" id="L105">        levelOneState = GameState.LevelOneState;</span>
+<span class="fc" id="L106">        levelTwoState = GameState.LevelTwoState;</span>
+<span class="fc" id="L107">        winGameState = GameState.WinGameState;</span>
+<span class="fc" id="L108">        loseGameState = GameState.LoseGameState;</span>
+
+<span class="fc" id="L110">        currGameState = levelOneState;</span>
+    
+<span class="fc" id="L112">    }</span>
+
+    /**
+     * Receive key pressed signal from the keyboard.
+    */
+    public void keyPressed(){
+<span class="nc bnc" id="L118" title="All 2 branches missed.">        if(this.keyCode == 37 ){ </span>
+<span class="nc" id="L119">            wizard.setMoveLeft();</span>
+        }
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        if(this.keyCode == 38 ){</span>
+<span class="nc" id="L122">            wizard.setMoveUp();</span>
+        }
+<span class="nc bnc" id="L124" title="All 2 branches missed.">        if(this.keyCode == 39 ){</span>
+<span class="nc" id="L125">            wizard.setMoveRight();</span>
+        }
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        if(this.keyCode == 40 ){</span>
+<span class="nc" id="L128">            wizard.setMoveDown();</span>
+        }
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        if(this.keyCode == 32){</span>
+<span class="nc" id="L131">            wizard.setShootFireball();</span>
+        }
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        if(this.keyCode == 16){</span>
+<span class="nc" id="L134">            wizard.setShootFreezeball();</span>
+        }
+<span class="nc" id="L136">    }</span>
+    
+    /**
+     * Receive key released signal from the keyboard.
+    */
+    public void keyReleased(){
+<span class="nc bnc" id="L142" title="All 2 branches missed.">        if(this.keyCode ==32){</span>
+<span class="nc" id="L143">            wizard.stopShootFireball();</span>
+        }
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        if(this.keyCode == 16){</span>
+<span class="nc" id="L146">            wizard.stopShootFreezeball();</span>
+        }
+<span class="nc bnc" id="L148" title="All 2 branches missed.">        if(this.keyCode == 37 ){ </span>
+<span class="nc" id="L149">            wizard.stopMoveLeft();</span>
+        }
+<span class="nc bnc" id="L151" title="All 2 branches missed.">        if(this.keyCode == 38 ){</span>
+<span class="nc" id="L152">            wizard.stopMoveUp();</span>
+        }
+<span class="nc bnc" id="L154" title="All 2 branches missed.">        if(this.keyCode == 39 ){</span>
+<span class="nc" id="L155">            wizard.stopMoveRight();</span>
+        }
+<span class="nc bnc" id="L157" title="All 2 branches missed.">        if(this.keyCode == 40 ){</span>
+<span class="nc" id="L158">            wizard.stopMoveDown();</span>
+        }
+<span class="nc" id="L160">    }</span>
+
+
+    /**
+     * Draw all elements in the game by current frame. 
+	 */
+    public void draw() {
+<span class="fc" id="L167">        background(200,157,124);</span>
+<span class="fc" id="L168">        textFont(f,24);  </span>
+<span class="fc" id="L169">        fill(255,255,255);</span>
+<span class="fc" id="L170">        text(&quot;Lives: &quot;, 1*20, 35*20);</span>
+<span class="fc" id="L171">        text(&quot;Level: &quot; + currGameState.getlevel() + &quot;/2&quot;, 9*20, 35*20);</span>
+        
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">        if(currGameState == levelOneState){</span>
+            //Initializing game objects
+<span class="fc bfc" id="L175" title="All 2 branches covered.">            if(currGameState.getreset() == 1){</span>
+<span class="fc" id="L176">                resetLevel1();</span>
+            }
+            //Ticking and drawing
+<span class="fc" id="L179">            tickdraw();</span>
+            //Cooldown Bars
+<span class="fc" id="L181">            fill(255,255,255);</span>
+<span class="fc" id="L182">            rect(23*20, 45*15, 11*20, 10);</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">            if(wizard.getdrawRectFireball()){ </span>
+<span class="fc" id="L184">                fill(255,192,203);</span>
+<span class="fc" id="L185">                rect(23*20, 45*15, wizard.getTimerRectFireball(), 10);</span>
+            }
+<span class="fc" id="L187">            fill(255,255,255);</span>
+<span class="fc" id="L188">            rect(23*20, 46*15, 11*20, 10);</span>
+<span class="fc bfc" id="L189" title="All 2 branches covered.">            if(wizard.getdrawRectFreezeball()){</span>
+<span class="fc" id="L190">                fill(173,216,230);</span>
+<span class="fc" id="L191">                rect(23*20, 46*15, wizard.getTimerRectFreezeball(), 10); </span>
+            }
+            //PowerUp Timer
+<span class="pc bpc" id="L194" title="1 of 2 branches missed.">            if(wizard.getdrawPowerUp()){</span>
+<span class="nc" id="L195">                textFont(f,24); </span>
+<span class="nc" id="L196">                fill(0,0,0);</span>
+<span class="nc" id="L197">                text(&quot;SPEED: &quot; + (wizard.getPowerUpTimer()), 16*20, 35*20);</span>
+            }
+            //Updating game state
+<span class="fc" id="L200">            nextState = levelOneState.GameStateUpdate();</span>
+<span class="fc" id="L201">            getCurrGameState(nextState);  </span>
+        }
+
+
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">        if(currGameState == levelTwoState){</span>
+            //Initializing game objects
+<span class="nc bnc" id="L207" title="All 2 branches missed.">            if(currGameState.getreset() == 1){</span>
+<span class="nc" id="L208">                resetLevel2();</span>
+            }
+            //Ticking and drawing
+<span class="nc" id="L211">            tickdraw();</span>
+            //Cooldown Bars
+<span class="nc" id="L213">            fill(255,255,255);</span>
+<span class="nc" id="L214">            rect(23*20, 45*15, 12*20, 10);</span>
+<span class="nc bnc" id="L215" title="All 2 branches missed.">            if(wizard.getdrawRectFireball()){ //</span>
+<span class="nc" id="L216">                fill(255,192,203);</span>
+<span class="nc" id="L217">                rect(23*20, 45*15, wizard.getTimerRectFireball(), 10);</span>
+            }
+<span class="nc" id="L219">            fill(255,255,255);</span>
+<span class="nc" id="L220">            rect(23*20, 46*15, 12*20, 10);</span>
+<span class="nc bnc" id="L221" title="All 2 branches missed.">            if(wizard.getdrawRectFreezeball()){</span>
+<span class="nc" id="L222">                fill(173,216,230);</span>
+<span class="nc" id="L223">                rect(23*20, 46*15, wizard.getTimerRectFreezeball(), 10); </span>
+            }
+            //PowerUp Timer
+<span class="nc bnc" id="L226" title="All 2 branches missed.">            if(wizard.getdrawPowerUp()){</span>
+<span class="nc" id="L227">                textFont(f,24); </span>
+<span class="nc" id="L228">                fill(0,0,0); </span>
+<span class="nc" id="L229">                text(&quot;SPEED: &quot; + (wizard.getPowerUpTimer()), 16*20, 35*20); </span>
+            }
+            //Updating game state
+<span class="nc" id="L232">            nextState = levelTwoState.GameStateUpdate();</span>
+<span class="nc" id="L233">            getCurrGameState(nextState); </span>
+        }
+
+<span class="pc bpc" id="L236" title="1 of 2 branches missed.">        if(currGameState == winGameState){</span>
+<span class="nc" id="L237">            background(200,157,124);</span>
+<span class="nc" id="L238">            textFont(f,60);  </span>
+<span class="nc" id="L239">            text(&quot;You Win&quot;, 11*20, 18*20); </span>
+<span class="nc bnc" id="L240" title="All 2 branches missed.">            if(keyPressed){</span>
+<span class="nc" id="L241">                currGameState.setkeyPressed();</span>
+            }
+<span class="nc" id="L243">            levelOneState.setfirstload(0);</span>
+<span class="nc" id="L244">            nextState = winGameState.GameStateUpdate();</span>
+<span class="nc" id="L245">            getCurrGameState(nextState); </span>
+        }
+
+<span class="pc bpc" id="L248" title="1 of 2 branches missed.">        if(currGameState == loseGameState){</span>
+<span class="nc" id="L249">            background(200,157,124);</span>
+<span class="nc" id="L250">            textFont(f,60);  </span>
+<span class="nc" id="L251">            text(&quot;Game Over&quot;, 10*20, 18*20); </span>
+<span class="nc bnc" id="L252" title="All 2 branches missed.">            if(keyPressed){</span>
+<span class="nc" id="L253">                currGameState.setkeyPressed();</span>
+            }
+<span class="nc" id="L255">            levelOneState.setfirstload(0);</span>
+<span class="nc" id="L256">            nextState = loseGameState.GameStateUpdate();</span>
+<span class="nc" id="L257">            getCurrGameState(nextState); </span>
+        }
+<span class="fc" id="L259">    }</span>
+
+    //Helper Methods
+    private void tickdraw(){
+        //Tick
+<span class="fc" id="L264">        wizard.tick();</span>
+<span class="fc bfc" id="L265" title="All 2 branches covered.">        for(Gremlin g: this.gremlins){</span>
+<span class="fc" id="L266">            g.tick();</span>
+<span class="fc" id="L267">        }</span>
+<span class="fc" id="L268">        exitTile.tick();</span>
+<span class="fc bfc" id="L269" title="All 2 branches covered.">        for(Slime slime : this.slimes){</span>
+<span class="fc" id="L270">            slime.tick();</span>
+<span class="fc" id="L271">        }</span>
+<span class="fc bfc" id="L272" title="All 2 branches covered.">        for(Fireball fireball : this.fireballs){</span>
+<span class="fc" id="L273">            fireball.tick();</span>
+<span class="fc" id="L274">        }</span>
+<span class="fc bfc" id="L275" title="All 2 branches covered.">        for(Brick brick : this.bricks){</span>
+<span class="fc" id="L276">            brick.tick();</span>
+<span class="fc" id="L277">        }</span>
+<span class="fc bfc" id="L278" title="All 2 branches covered.">        for(Freeze freezeball : this.freezeballs){</span>
+<span class="fc" id="L279">            freezeball.tick();</span>
+<span class="fc" id="L280">        }</span>
+        //Draw
+<span class="fc bfc" id="L282" title="All 2 branches covered.">        for(Stone stone: this.stones){ </span>
+<span class="fc" id="L283">            stone.draw(this);</span>
+<span class="fc" id="L284">        }</span>
+<span class="fc bfc" id="L285" title="All 2 branches covered.">        for(Brick brick: this.bricks){</span>
+<span class="fc" id="L286">            brick.draw(this);</span>
+<span class="fc" id="L287">        }</span>
+<span class="fc" id="L288">        exitTile.draw(this); </span>
+<span class="fc bfc" id="L289" title="All 2 branches covered.">        for(Gremlin grem: this.gremlins){ </span>
+<span class="fc" id="L290">            grem.draw(this);</span>
+<span class="fc" id="L291">        }</span>
+<span class="fc" id="L292">        wizard.draw(this);  </span>
+<span class="fc bfc" id="L293" title="All 2 branches covered.">        for(Wizard wiz: this.livesDispWizards){ </span>
+<span class="fc" id="L294">            wiz.draw(this);</span>
+<span class="fc" id="L295">        } </span>
+<span class="fc bfc" id="L296" title="All 2 branches covered.">        for(Slime slime : this.slimes){</span>
+<span class="fc" id="L297">            slime.draw(this);</span>
+<span class="fc" id="L298">        }</span>
+<span class="fc bfc" id="L299" title="All 2 branches covered.">        for(Fireball fireball : this.fireballs){</span>
+<span class="fc" id="L300">            fireball.draw(this);</span>
+<span class="fc" id="L301">        }</span>
+<span class="pc bpc" id="L302" title="1 of 2 branches missed.">        for(Freeze freezeball : this.freezeballs){</span>
+<span class="nc" id="L303">            freezeball.draw(this);</span>
+<span class="nc" id="L304">        }</span>
+<span class="pc bpc" id="L305" title="1 of 2 branches missed.">        for(PowerUp powerup: this.powerups){</span>
+<span class="nc" id="L306">            powerup.draw(this);</span>
+<span class="nc" id="L307">        }</span>
+        
+<span class="fc" id="L309">    }</span>
+
+ 
+    private void resetLevel1(){
+<span class="fc" id="L313">        levelOne = new LevelLoad(1, this.configPath, this.stonewall, this.brickwall, this.gremlin, this.wizard1, this.exitwall, this.fireball, this.slime, this.freeze, this.brickwall_destroyed0, this.brickwall_destroyed1, this.brickwall_destroyed2, this.brickwall_destroyed3, this.powerupImage, this.air, this.wizard0, this.wizard2, this.wizard3);</span>
+<span class="fc" id="L314">        levelOne.Load();</span>
+<span class="fc" id="L315">        this.stones = levelOne.getStones();</span>
+<span class="fc" id="L316">        this.bricks = levelOne.getBricks();</span>
+<span class="fc" id="L317">        this.exitTile = levelOne.getExitTile();</span>
+<span class="fc" id="L318">        this.airTiles = levelOne.getAirTiles();</span>
+<span class="fc" id="L319">        this.gremlins = levelOne.getGremlins();</span>
+<span class="fc" id="L320">        this.wizard = levelOne.getWizard(); </span>
+<span class="fc" id="L321">        this.livesDispWizards = levelOne.getWizLives(); </span>
+<span class="fc" id="L322">        this.fireballs = levelOne.getFireballs();</span>
+<span class="fc" id="L323">        this.slimes = levelOne.getSlimes();</span>
+<span class="fc" id="L324">        this.freezeballs = levelOne.getFreezeballs();</span>
+<span class="fc" id="L325">        this.powerups = levelOne.getPowerUps();</span>
+        //If not first load of level, decrementing lives and lives display
+<span class="pc bpc" id="L327" title="1 of 2 branches missed.">        if(currGameState.getfirstload() != 0){</span>
+<span class="nc bnc" id="L328" title="All 2 branches missed.">            for(int i=0; i&lt;currGameState.getfirstload(); i++){</span>
+<span class="nc" id="L329">                wizard.setLives(wizard.getLives() - 1);</span>
+<span class="nc" id="L330">                livesDispWizards.remove(livesDispWizards.size()-1); </span>
+            } 
+        }
+<span class="fc" id="L333">        currGameState.setfirstload(currGameState.getfirstload()+1);</span>
+<span class="fc" id="L334">        currGameState.setreset(0);</span>
+        //Setting game objects to game class
+<span class="fc" id="L336">        currGameState.setGameObjects(wizard, exitTile);</span>
+<span class="fc" id="L337">    }</span>
+
+    private void resetLevel2(){
+<span class="nc" id="L340">        levelTwo = new LevelLoad(2, this.configPath, this.stonewall, this.brickwall, this.gremlin, this.wizard1, this.exitwall, this.fireball, this.slime, this.freeze, this.brickwall_destroyed0, this.brickwall_destroyed1, this.brickwall_destroyed2, this.brickwall_destroyed3, this.powerupImage, this.air, this.wizard0, this.wizard2, this.wizard3);</span>
+<span class="nc" id="L341">        levelTwo.Load();</span>
+<span class="nc" id="L342">        this.stones = levelTwo.getStones();</span>
+<span class="nc" id="L343">        this.bricks = levelTwo.getBricks();</span>
+<span class="nc" id="L344">        this.exitTile = levelTwo.getExitTile();</span>
+<span class="nc" id="L345">        this.airTiles = levelTwo.getAirTiles();</span>
+<span class="nc" id="L346">        this.gremlins = levelTwo.getGremlins();</span>
+<span class="nc" id="L347">        this.wizard = levelTwo.getWizard(); </span>
+<span class="nc" id="L348">        this.livesDispWizards = levelTwo.getWizLives();</span>
+<span class="nc" id="L349">        this.fireballs = levelTwo.getFireballs();</span>
+<span class="nc" id="L350">        this.slimes = levelTwo.getSlimes();</span>
+<span class="nc" id="L351">        this.freezeballs = levelTwo.getFreezeballs();</span>
+<span class="nc" id="L352">        this.powerups = levelTwo.getPowerUps();</span>
+        //Used to keep wizard life from level1
+<span class="nc bnc" id="L354" title="All 2 branches missed.">        if(currGameState.getfirstload() == 0){</span>
+<span class="nc" id="L355">            currGameState.setfirstload(levelOneState.getfirstload()-1);</span>
+        }
+        //If not first load of level, decrementing lives and lives display
+<span class="nc bnc" id="L358" title="All 2 branches missed.">        if(currGameState.getfirstload() != 0){</span>
+<span class="nc bnc" id="L359" title="All 2 branches missed.">            for(int i=0; i&lt;currGameState.getfirstload(); i++){</span>
+<span class="nc" id="L360">                wizard.setLives(wizard.getLives() - 1); </span>
+<span class="nc" id="L361">                livesDispWizards.remove(livesDispWizards.size()-1); </span>
+            } 
+        }
+<span class="nc" id="L364">        currGameState.setfirstload(currGameState.getfirstload()+1);</span>
+<span class="nc" id="L365">        currGameState.setreset(0);</span>
+        //Setting game objects to game class
+<span class="nc" id="L367">        currGameState.setGameObjects(wizard, exitTile);</span>
+<span class="nc" id="L368">    }</span>
+
+    //Used to determine nextgame state
+    private void getCurrGameState(int nextState){
+<span class="pc bpc" id="L372" title="1 of 2 branches missed.">        if(nextState == 1){currGameState = levelOneState;}</span>
+<span class="pc bpc" id="L373" title="1 of 2 branches missed.">        else if(nextState == 2){currGameState = levelTwoState;}</span>
+<span class="pc bpc" id="L374" title="1 of 2 branches missed.">        else if(nextState == 3){currGameState = winGameState;}</span>
+<span class="pc bpc" id="L375" title="1 of 2 branches missed.">        else if(nextState == 4){currGameState = loseGameState;}</span>
+        else{}//error
+<span class="fc" id="L377">    }</span>
+
+    public static void main(String[] args) {
+<span class="nc" id="L380">        PApplet.main(&quot;gremlins.App&quot;);</span>
+<span class="nc" id="L381">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

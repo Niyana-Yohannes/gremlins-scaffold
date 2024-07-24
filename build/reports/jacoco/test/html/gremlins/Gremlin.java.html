@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Gremlin.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">gremlins_scaffold2</a> &gt; <a href="index.source.html" class="el_package">gremlins</a> &gt; <span class="el_source">Gremlin.java</span></div><h1>Gremlin.java</h1><pre class="source lang-java linenums">package gremlins;
+
+import processing.core.PImage;
+
+import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.Iterator;
+
+public class Gremlin extends MovingObject{
+    
+    private double cooldown;
+
+    //Gremlin also needs acces to wizard, fireball, and freezeball, simes, and airTiles
+    private Wizard wizard;
+    private ArrayList&lt;Air&gt; airTiles;
+    private ArrayList&lt;Fireball&gt; fireballs;
+    private ArrayList&lt;Freeze&gt; freezeballs;
+    private ArrayList&lt;Slime&gt; slimes;
+    //For moving
+<span class="fc" id="L21">    private final Random randomGenerator = new Random();</span>
+<span class="fc" id="L22">    private int intDirection = randomGenerator.nextInt(4);</span>
+    private boolean hasMoved;
+    private int prevDir;     
+    private HashSet&lt;Integer&gt; checkPrevDirs;     
+    //For Shooting
+    private int timer;
+    private boolean shoot;
+    private PImage slimePimage; 
+    //For respawning
+    private ArrayList&lt;Air&gt; respawnTiles;
+    //For frozen
+    private boolean frozen;
+    private int frozenTimer;
+
+    public Gremlin(int x, int y, PImage sprite, PImage slime){
+<span class="fc" id="L37">        super(x,y,sprite);</span>
+<span class="fc" id="L38">        this.slimePimage = slime;</span>
+<span class="fc" id="L39">        this.wizard = null;</span>
+<span class="fc" id="L40">        this.fireballs = null;</span>
+<span class="fc" id="L41">        this.freezeballs = null;</span>
+
+<span class="fc" id="L43">        this.xVel = 1;</span>
+<span class="fc" id="L44">        this.yVel = 1;</span>
+        
+<span class="fc" id="L46">        this.collide = false;</span>
+<span class="fc" id="L47">        this.alive = true;</span>
+
+<span class="fc" id="L49">        this.cooldown = 0; </span>
+<span class="fc" id="L50">        this.hasMoved = false;</span>
+
+<span class="fc" id="L52">        this.checkPrevDirs = new HashSet&lt;Integer&gt;();</span>
+
+<span class="fc" id="L54">        this.timer = 0;</span>
+<span class="fc" id="L55">        this.shoot = true;</span>
+
+<span class="fc" id="L57">        this.respawnTiles = new ArrayList&lt;Air&gt;();</span>
+
+<span class="fc" id="L59">        this.frozen = false;</span>
+<span class="fc" id="L60">        this.frozenTimer = 0;</span>
+
+<span class="fc" id="L62">        this.prevDir = 0;</span>
+<span class="fc" id="L63">        this.direction = null;</span>
+
+<span class="fc" id="L65">    }</span>
+
+    /**
+     * Executes logic that involves gremlin movement, collision with fireball and freezeball, and gremlin shooting
+     */
+    public void tick(){
+        
+        //If frozen, cannot move for 3sec
+<span class="fc" id="L73">        checkFrozenBoth();</span>
+
+        //Move only if not frozen
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">        if(!this.frozen){</span>
+            //Moving
+<span class="fc" id="L78">            prevDir = intDirection; //Storing current move as previous move</span>
+<span class="fc" id="L79">            intDirtoStringDir(); </span>
+            //Change direction only if collision 
+<span class="fc bfc" id="L81" title="All 2 branches covered.">            while(!this.hasMoved){</span>
+<span class="fc" id="L82">                checkCollision(this.bricks, this.direction);</span>
+<span class="fc" id="L83">                checkCollision(this.stones, this.direction);</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">                if(this.collide){</span>
+<span class="fc" id="L85">                    intDirection = randomGenerator.nextInt(4);</span>
+                    //Ensuring it doesn't move in the same direction it came from
+<span class="fc bfc" id="L87" title="All 16 branches covered.">                    while((prevDir == 0 &amp;&amp; intDirection == 2) || (prevDir == 2 &amp;&amp; intDirection == 0) || (prevDir == 1 &amp;&amp; intDirection == 3) || (prevDir == 3 &amp;&amp; intDirection == 1)){</span>
+<span class="fc" id="L88">                        intDirection = randomGenerator.nextInt(4); </span>
+<span class="fc" id="L89">                        checkPrevDirs.add(intDirection);</span>
+                        //If its checked all moves, it means only direction it came from is possible option
+<span class="fc bfc" id="L91" title="All 2 branches covered.">                        if(checkPrevDirs.size() == 4){</span>
+<span class="fc" id="L92">                            break;</span>
+                        }
+                    }
+                    //If its checked all moves, it means only direction it came from is possible option
+<span class="fc bfc" id="L96" title="All 2 branches covered.">                    if(checkPrevDirs.size() == 4){</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">                        if(prevDir == 0){intDirection = 2;}</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">                        else if(prevDir == 2){intDirection = 0;}</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">                        else if(prevDir == 1){intDirection = 3;}</span>
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">                        else if(prevDir == 3){intDirection = 1;}</span>
+                    }
+<span class="fc" id="L102">                    intDirtoStringDir();</span>
+                }
+                //If there is no collision, move in same direction
+<span class="fc bfc" id="L105" title="All 2 branches covered.">                else if(this.direction.equals(&quot;left&quot;)){</span>
+<span class="fc" id="L106">                    this.x -= xVel;</span>
+<span class="fc" id="L107">                    this.hasMoved = true;</span>
+                }
+<span class="fc bfc" id="L109" title="All 2 branches covered.">                else if(this.direction.equals(&quot;up&quot;)){</span>
+<span class="fc" id="L110">                    this.y -= yVel;</span>
+<span class="fc" id="L111">                    this.hasMoved = true;</span>
+                }
+<span class="fc bfc" id="L113" title="All 2 branches covered.">                else if(this.direction.equals(&quot;right&quot;)){</span>
+<span class="fc" id="L114">                    this.x += xVel;</span>
+<span class="fc" id="L115">                    this.hasMoved = true;</span>
+                }
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">                else if(this.direction.equals(&quot;down&quot;)){</span>
+<span class="fc" id="L118">                    this.y += yVel;</span>
+<span class="fc" id="L119">                    this.hasMoved = true;</span>
+                }
+<span class="fc" id="L121">                this.collide = false;</span>
+            }
+<span class="fc" id="L123">            checkPrevDirs.clear();</span>
+<span class="fc" id="L124">            this.hasMoved = false;</span>
+        }
+        //Frozen for 3 seconds
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">        if(this.frozen){</span>
+<span class="nc" id="L128">            frozenTimer++;</span>
+<span class="nc bnc" id="L129" title="All 2 branches missed.">            if(frozenTimer &gt;= 3*60){ </span>
+<span class="nc" id="L130">                this.frozen = false;</span>
+<span class="nc" id="L131">                frozenTimer = 0;</span>
+            }
+        }
+
+
+        //Collision with fireball
+<span class="fc" id="L137">        checkAliveBoth(this.fireballs); </span>
+
+        //If  dead, start in new direction 10 tiles away from wizard;
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">        if(!this.alive){</span>
+<span class="nc" id="L141">            int wizx = this.wizard.getX();</span>
+<span class="nc" id="L142">            int wizy = this.wizard.getY();</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">            for(Air airTile : airTiles){</span>
+<span class="nc bnc" id="L144" title="All 8 branches missed.">                if(airTile.getX() &gt;= wizx + 10*20  || airTile.getX() &lt;= wizx -10*20 &amp;&amp; airTile.getY() &gt;= wizy + 10*20  || airTile.getY() &lt;= wizy -10*20){</span>
+<span class="nc" id="L145">                    this.respawnTiles.add(airTile);</span>
+                }
+<span class="nc" id="L147">            }</span>
+<span class="nc" id="L148">            int chooserand = randomGenerator.nextInt(respawnTiles.size());</span>
+<span class="nc" id="L149">            Air nextGremPos = respawnTiles.get(chooserand);</span>
+<span class="nc" id="L150">            this.x = nextGremPos.getX();</span>
+<span class="nc" id="L151">            this.y = nextGremPos.getY();</span>
+<span class="nc" id="L152">            respawnTiles.clear(); </span>
+
+<span class="nc" id="L154">            this.frozen = false;</span>
+        }
+
+        //Shooting slime
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">        if(this.alive){</span>
+<span class="fc" id="L159">            addSlime();</span>
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">            if(!this.frozen){</span>
+<span class="fc" id="L161">                timer++; //Only increment timer if not frozen</span>
+            }
+<span class="fc bfc" id="L163" title="All 2 branches covered.">            if(timer==cooldown*60){ //60FPS and cooldown of 3sec --&gt; Shoot after 180 frames</span>
+<span class="fc" id="L164">                this.shoot = true;</span>
+<span class="fc" id="L165">                timer = 0;</span>
+            }
+<span class="fc" id="L167">            checkDeadSlime();</span>
+        }
+
+        //Return to default condition
+<span class="fc" id="L171">        this.alive = true;</span>
+<span class="fc" id="L172">    }</span>
+
+    //setter methods
+    public void setCooldown(double cooldown){
+<span class="fc" id="L176">        this.cooldown = cooldown;</span>
+<span class="fc" id="L177">    }</span>
+    public void setWizard(Wizard wizard){
+<span class="fc" id="L179">        this.wizard = wizard;</span>
+<span class="fc" id="L180">    }</span>
+    public void setAirTiles(ArrayList&lt;Air&gt; airTiles){
+<span class="fc" id="L182">        this.airTiles = airTiles;</span>
+<span class="fc" id="L183">    }</span>
+    public void setFireballs(ArrayList&lt;Fireball&gt; fireballs){
+<span class="fc" id="L185">        this.fireballs = fireballs;</span>
+<span class="fc" id="L186">    }</span>
+    public void setFreezeballs(ArrayList&lt;Freeze&gt; freezeballs){
+<span class="fc" id="L188">        this.freezeballs = freezeballs;</span>
+<span class="fc" id="L189">    }</span>
+    public void setSlimes(ArrayList&lt;Slime&gt; slimes){
+<span class="fc" id="L191">        this.slimes = slimes;</span>
+<span class="fc" id="L192">    }</span>
+
+    //Change direction based on integers
+    private void intDirtoStringDir(){
+<span class="fc bfc" id="L196" title="All 2 branches covered.">        if(this.intDirection == 0){</span>
+<span class="fc" id="L197">            this.direction = &quot;left&quot;;</span>
+        }
+<span class="fc bfc" id="L199" title="All 2 branches covered.">        else if(this.intDirection == 1){</span>
+<span class="fc" id="L200">            this.direction = &quot;up&quot;;</span>
+        }
+<span class="fc bfc" id="L202" title="All 2 branches covered.">        else if(this.intDirection == 2){</span>
+<span class="fc" id="L203">            this.direction = &quot;right&quot;;</span>
+        }
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">        else if(this.intDirection == 3){</span>
+<span class="fc" id="L206">            this.direction = &quot;down&quot;;</span>
+        }
+<span class="fc" id="L208">    }</span>
+
+    //Add slime
+    private void addSlime(){
+<span class="fc bfc" id="L212" title="All 2 branches covered.">        if(this.shoot){</span>
+<span class="fc" id="L213">            this.slimes.add(new Slime(this.x, this.y, this.slimePimage));</span>
+<span class="fc" id="L214">            this.slimes.get(slimes.size() - 1).setDirection(this.direction);</span>
+<span class="fc" id="L215">            this.slimes.get(slimes.size() - 1).setBricks(this.bricks);</span>
+<span class="fc" id="L216">            this.slimes.get(slimes.size() - 1).setStones(this.stones);</span>
+<span class="fc" id="L217">            this.slimes.get(slimes.size() - 1).setFireball(this.fireballs);</span>
+<span class="fc" id="L218">            this.slimes.get(slimes.size() - 1).setFreezeball(this.freezeballs);</span>
+        }
+<span class="fc" id="L220">        this.shoot = false;</span>
+<span class="fc" id="L221">    }</span>
+    //Remove slime that has collided with something
+    private void checkDeadSlime(){
+<span class="fc" id="L224">        Iterator&lt;Slime&gt; itr = this.slimes.iterator();</span>
+<span class="fc bfc" id="L225" title="All 2 branches covered.">        while(itr.hasNext()){</span>
+<span class="fc" id="L226">            Slime slime = itr.next();</span>
+<span class="fc bfc" id="L227" title="All 2 branches covered.">            if(!slime.getAlive()){</span>
+<span class="fc" id="L228">                itr.remove();</span>
+            }
+<span class="fc" id="L230">        }</span>
+<span class="fc" id="L231">    }</span>
+    //Checks if freezeball hits gremlin, and if so sets frozen attribute to true
+    private void checkFrozenBoth(){
+<span class="fc bfc" id="L234" title="All 2 branches covered.">        for (Freeze freezeball: this.freezeballs){</span>
+<span class="fc" id="L235">            int thisRight = this.x + this.sprite.width;</span>
+<span class="fc" id="L236">            int thisBottom = this.y + this.sprite.height;</span>
+
+<span class="fc" id="L238">            int freezeballLeft = freezeball.getX();</span>
+<span class="fc" id="L239">            int freezeballRight = freezeball.getX() + freezeball.getWidth();</span>
+<span class="fc" id="L240">            int freezeballTop = freezeball.getY();</span>
+<span class="fc" id="L241">            int freezeballBottom = freezeball.getY() + freezeball.getHeight();</span>
+
+<span class="pc bpc" id="L243" title="3 of 8 branches missed.">            if(thisRight &gt; freezeballLeft &amp;&amp; this.x &lt; freezeballRight &amp;&amp; thisBottom &gt; freezeballTop &amp;&amp; this.y &lt; freezeballBottom){</span>
+<span class="nc" id="L244">                this.frozen = true;</span>
+<span class="nc" id="L245">                freezeball.setNotAlive();</span>
+<span class="nc" id="L246">                return;</span>
+            }
+<span class="fc" id="L248">        }</span>
+<span class="fc" id="L249">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
